@@ -1,5 +1,6 @@
 package noorg.bookparsing.domain.report;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import noorg.bookparsing.report.sort.AscendingDateReadComparator;
  *
  */
 public class YearlyReport extends AbstractReport{
+	
 	private int year;
 	private List<Book> books = new ArrayList<>();
 	private Map<BookFormat, Integer> countsByFormat = new HashMap<>();
@@ -61,6 +63,7 @@ public class YearlyReport extends AbstractReport{
 				if(format != null){
 					switch(format){
 					case AUDIO_BOOK:
+						totalHours += pageCount;
 						break;
 					case BOOK:
 					case EBOOK:
@@ -132,16 +135,28 @@ public class YearlyReport extends AbstractReport{
 		return books.size();
 	}
 	
-	public double getAverageRating(){
-		return totalRating/getTotal();
+	public double getAverageRating(){		
+		return getAverage(totalRating);
 	}
 	
 	public double getAveragePages(){
-		return totalPages/getTotal();
+		return getAverage(totalPages);
 	}
 	
 	public double getAveragesHours(){
-		return totalHours/getTotal();
+		return getAverage(totalHours);
+	}
+	
+	/**
+	 * Helper to ensure double value for averages
+	 * 
+	 * @param totalCount
+	 * @return
+	 */
+	private double getAverage(final long totalCount){
+		double totalDbl = new Long(totalCount).doubleValue();
+		
+		return totalDbl/getTotal();
 	}
 
 	@Override
@@ -153,14 +168,17 @@ public class YearlyReport extends AbstractReport{
 		sb.append(getCounts(countsByFormat)).append("\n");
 		sb.append(getCounts(countsByGenre)).append("\n");		
 		
-		sb.append("Average Rating: ").append(getAverageRating()).append("\n");
+		sb.append("Average Rating: ");
+		sb.append(getDoubleAsFixedDecimal(getAverageRating())).append("\n");
 		sb.append(getCounts(countsByRating)).append("\n");
 		
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");
-		sb.append("Average Pages: ").append(getAveragePages()).append("\n");
+		sb.append("Average Pages: ");
+		sb.append(getDoubleAsFixedDecimal(getAveragePages())).append("\n");
 		
-		sb.append("Total Hours: ").append(getTotalHours()).append("\n");
-		sb.append("Average Pages: ").append(getAveragesHours()).append("\n\n");
+		sb.append("Total Audio Hours: ").append(getTotalHours()).append("\n");
+		sb.append("Average Hours: ");
+		sb.append(getDoubleAsFixedDecimal(getAveragesHours())).append("\n\n");
 		
 		sb.append("Books:").append("\n");
 		// TODO tabs or some better spacing..

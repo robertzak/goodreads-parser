@@ -63,12 +63,12 @@ public class BookParsing {
 		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
 		    for(String line; (line = br.readLine()) != null; ) {
 		    	// TODO better way to skip first line?
-		    	if(line.startsWith("Book Id")){
+		    	if(line.startsWith("﻿Book Id")){
 		    		continue;
 		    	}
 		    	
 		        final Book book = parser.parse(line);
-		        books.add(book);		        
+		        books.add(book);
 		    }
 		    // line is not visible here.
 		}catch(Exception e){

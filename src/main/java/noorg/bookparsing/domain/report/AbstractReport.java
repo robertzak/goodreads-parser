@@ -1,5 +1,6 @@
 package noorg.bookparsing.domain.report;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
@@ -33,6 +34,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractReport implements Report{
 	protected static final Logger logger = LoggerFactory.getLogger(
 			AbstractReport.class);
+	protected static final DecimalFormat DECIMAL_FORMAT = 
+			new DecimalFormat("###.##");
 
 	@Override
 	public String toString(){
@@ -89,5 +92,18 @@ public abstract class AbstractReport implements Report{
 		}
 		
 		return sb.toString();
+	}
+	
+
+	
+	/**
+	 * Helper to convert a double into a fixed decimal String with 2
+	 * decimal places.
+	 *  
+	 * @param value
+	 * @return
+	 */
+	protected String getDoubleAsFixedDecimal(final double value){
+		return DECIMAL_FORMAT.format(value);
 	}
 }
