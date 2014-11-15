@@ -27,6 +27,6 @@ public enum BookGenre {
 	 * Also, we should avoid sub-genres like Urban Fantasy or 
 	 * Paranormal Romance in my opinion..
 	 */
-	FANTASY, HISTORICAL, HORROR, MYSTERY, NONFICTION, ROMANCE, SCIFI, THRILLER, UNKNOWN;
+	FANTASY, HISTORICAL, HORROR, HUMOR, MYSTERY, NONFICTION, ROMANCE, SCIFI, THRILLER, UNKNOWN;
 
 }
