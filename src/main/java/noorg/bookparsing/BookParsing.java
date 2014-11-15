@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.enrich.GraphicNovelEnricher;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
 import noorg.bookparsing.report.impl.YearlyReportService;
 import noorg.bookparsing.service.ParsingService;
@@ -73,6 +74,9 @@ public class BookParsing {
 		}catch(Exception e){
 			logger.error("Error reading input", e);
 		}
+		
+		// do some data enrichment
+		new GraphicNovelEnricher().enrichBooks(books);
 		
 		logger.info(new YearlyReportService().generateReport(books, 
 				new DefaultBookFormater()));
