@@ -99,52 +99,114 @@ public class YearlyReport extends AbstractReport{
 		}
 	}
 	
+	/**
+	 * The year of the report.
+	 * 
+	 * @return
+	 */
 	public int getYear() {
 		return year;
 	}
 
+	/**
+	 * The list of books for the year.
+	 * @return
+	 */
 	public List<Book> getBooks() {
 		return books;
 	}
 
+	/**
+	 * A map of the counts of the books for each {@link BookFormat}
+	 * @return
+	 */
 	public Map<BookFormat, Integer> getCountsByFormat() {
 		return countsByFormat;
 	}
 
+	/**
+	 * A map of the counts of the books by {@link BookGenre}
+	 * @return
+	 */
 	public Map<BookGenre, Integer> getCountsByGenre() {
 		return countsByGenre;
 	}
 
+	/**
+	 * A map of counts of each book rating (1, 2, 3, 4, 5 Stars)
+	 * @return
+	 */
 	public Map<Integer, Integer> getCountsByRating() {
 		return countsByRating;
 	}
 
+	/**
+	 * Sum of the page count of all Read books.
+	 * 
+	 * @return
+	 */
 	public int getTotalPages() {
 		return totalPages;
 	}
 
+	/**
+	 * Sum of length of all {@link BookFormat#AUDIO_BOOK}s
+	 * @return
+	 */
 	public int getTotalHours() {
 		return totalHours;
 	}
 
+	/**
+	 * Sum of the ratings for ALL books.
+	 * @return
+	 */
 	public long getTotalRating() {
 		return totalRating;
 	}
 	
+	/**
+	 * How many books (regardless of {@link BookFormat}) done this year
+	 * @return
+	 */
 	public int getTotal(){
 		return books.size();
 	}
 	
-	public double getAverageRating(){		
-		return getAverage(totalRating);
+	/**
+	 * Returns how many audio books listened to.
+	 * @return
+	 */
+	public int getTotalAudioBooks(){
+		int total = 0;
+		
+		final Integer abCount = countsByFormat.get(BookFormat.AUDIO_BOOK);
+		if(abCount != null){
+			total = abCount;
+		}
+		
+		return total;
+	}
+	
+	/**
+	 * How many books were read (ie NOT audio), this includes
+	 * all other {@link BookFormat}'s
+	 * @return
+	 */
+	public int getTotalBooksRead(){
+		return getTotal() - getTotalAudioBooks();
+	}
+	
+	public double getAverageRating(){
+		return getAverage(totalRating, getTotal());
 	}
 	
 	public double getAveragePages(){
-		return getAverage(totalPages);
+		return getAverage(totalPages, getTotalBooksRead());
 	}
 	
 	public double getAveragesHours(){
-		return getAverage(totalHours);
+		return getAverage(totalHours, getTotalAudioBooks());
 	}
 	
 	/**
@@ -153,10 +215,10 @@ public class YearlyReport extends AbstractReport{
 	 * @param totalCount
 	 * @return
 	 */
-	private double getAverage(final long totalCount){
-		double totalDbl = new Long(totalCount).doubleValue();
+	private double getAverage(final long count, final long total){
+		double totalDbl = new Long(count).doubleValue();
 		
-		return totalDbl/getTotal();
+		return totalDbl/total;
 	}
 
 	@Override
@@ -166,7 +228,7 @@ public class YearlyReport extends AbstractReport{
 		sb.append("Year: ").append(year).append("\n");
 		sb.append("Total Books: ").append(getTotal()).append("\n");
 		sb.append(getCounts(countsByFormat)).append("\n");
-		sb.append(getCounts(countsByGenre)).append("\n");		
+		sb.append(getCounts(countsByGenre)).append("\n");
 		
 		sb.append("Average Rating: ");
 		sb.append(getDoubleAsFixedDecimal(getAverageRating())).append("\n");
