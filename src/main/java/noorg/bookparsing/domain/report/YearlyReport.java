@@ -57,7 +57,7 @@ public class YearlyReport extends AbstractReport{
 			incrementMapValue(countsByFormat, format);
 			
 			final Integer pageCount = book.getNumberOfPages();
-			if(pageCount != null){				
+			if(pageCount != null){
 				if(format != null){
 					switch(format){
 					case AUDIO_BOOK:
@@ -67,7 +67,7 @@ public class YearlyReport extends AbstractReport{
 					case GRAPHIC_NOVEL:
 						totalPages += pageCount;
 						break;
-					case UNKOWN:
+					case UNKNOWN:
 					default:
 						logger.warn("{} has unknown Book Format This will mess up the "
 								+ "report statistics related to page counts/hours", book);

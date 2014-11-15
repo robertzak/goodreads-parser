@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum BookFormat {
 	// I'm squishing these down into fewer formats.
-	AUDIO_BOOK, BOOK, EBOOK, GRAPHIC_NOVEL, UNKOWN;
+	AUDIO_BOOK, BOOK, EBOOK, GRAPHIC_NOVEL, UNKNOWN;
 	
 	private static final Logger logger = LoggerFactory.getLogger
 			(BookFormat.class);
@@ -55,7 +55,7 @@ public enum BookFormat {
 	 * @return
 	 */
 	public static BookFormat parse(final String binding){
-		BookFormat format = UNKOWN;
+		BookFormat format = UNKNOWN;
 		
 		if(binding != null){
 			switch(binding){
