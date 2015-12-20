@@ -146,7 +146,12 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			book.setBcid(tokens[30]);
 			
 			// enrich the data
-			book.setFormat(BookFormat.parse(book.getBinding()));
+			final BookFormat format = BookFormat.parse(book.getBinding());
+			if(BookFormat.UNKNOWN.equals(format)){
+				logger.warn("{} has unknown format from binding: {}", 
+						book.getTitle(), book.getBinding());
+			}
+			book.setFormat(format);
 			book.setGenre(getGenre(book.getBookshelves()));
 			
 			// TODO read state..
