@@ -30,6 +30,15 @@ import noorg.bookparsing.report.format.BookFormatter;
  * 
  */
 public class YearlyReportService extends AbstractReportService {
+	// TODO change to support set of years?
+	private final int reportYear;
+	
+
+	public YearlyReportService(int reportYear) {
+		super();
+		this.reportYear = reportYear;
+	}
+
 
 	@Override
 	public String generateReport(List<Book> books, BookFormatter formatter) {
@@ -42,16 +51,16 @@ public class YearlyReportService extends AbstractReportService {
 		// TODO sort by year? and year end statistics..
 		
 		
-		YearlyReport report = new YearlyReport(2014);
+		YearlyReport report = new YearlyReport(reportYear);
 		for(Book book: books){
 			//sb.append(formatter.format(book)).append("\n");
 			
 			Calendar dateRead = book.getDateRead();
 			if(dateRead != null){
 				// TODO map of years
-				int year = dateRead.get(Calendar.YEAR);
+				int yearRead = dateRead.get(Calendar.YEAR);
 				
-				if(year == 2014){
+				if(yearRead == reportYear){
 					report.addBook(book);
 				}
 			}else{

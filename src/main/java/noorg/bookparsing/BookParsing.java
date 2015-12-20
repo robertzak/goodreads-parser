@@ -78,7 +78,7 @@ public class BookParsing {
 		// do some data enrichment
 		new GraphicNovelEnricher().enrichBooks(books);
 		
-		logger.info(new YearlyReportService().generateReport(books, 
+		logger.info(new YearlyReportService(2015).generateReport(books, 
 				new DefaultBookFormater()));
 		
 		 
