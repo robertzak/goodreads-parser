@@ -37,6 +37,7 @@ public enum BookFormat {
 	private final static String  AUDIOBOOK = "Audiobook";
 	private final static String  AUDIO_CASSETTE = "Audio Cassette";
 	private final static String  AUDIO_CD = "Audio CD";
+	private final static String  COMIC_BOOK = "Comic Book";	
 	private final static String  E_BOOK = "ebook";
 	private final static String  GRAPHICNOVEL = "Graphic Novel";
 	private final static String  HARDCOVER = "Hardcover";
@@ -45,6 +46,7 @@ public enum BookFormat {
 	private final static String  LIBRARY_BINDING = "Library Binding";
 	private final static String  MMPB = "Mass Market Paperback";
 	private final static String  MP3_CD = "MP3 CD";
+	private final static String  NOOK = "Nook";	
 	private final static String  PAPERBACK = "Paperback";
 	private final static String  PODIOBOOK = "Podiobook";
 	
@@ -70,8 +72,10 @@ public enum BookFormat {
 				break;
 			case E_BOOK:
 			case KINDLE:
+			case NOOK:
 				format = EBOOK;
 				break;
+			case COMIC_BOOK:
 			case GRAPHICNOVEL:
 				format = GRAPHIC_NOVEL;
 				break;
@@ -83,7 +87,7 @@ public enum BookFormat {
 				format = BOOK;
 				break;
 			default:
-				logger.warn("{} is not a supported binding type", binding);
+				logger.debug("{} is not a supported binding type", binding);
 			}
 		}
 		
