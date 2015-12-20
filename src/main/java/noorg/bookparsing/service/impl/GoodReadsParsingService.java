@@ -68,35 +68,35 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 		 * Good reads data..
 		 * 
 		 * 0 Book Id	
-		 * 1 Title	
-		 * 2 Author	
-		 * 3 Author l-f	
-		 * 4 Additional Authors	
-		 * 5 ISBN	
-		 * 6 ISBN13	
-		 * 7 My Rating	
-		 * 8 Average Rating	
-		 * 9 Publisher	
+		 * 1 Title
+		 * 2 Author
+		 * 3 Author l-f
+		 * 4 Additional Authors
+		 * 5 ISBN
+		 * 6 ISBN13
+		 * 7 My Rating
+		 * 8 Average Rating
+		 * 9 Publisher
 		 * 10 Binding	(use to get book format)
-		 * 11 Number of Pages	
-		 * 12 Year Published	
-		 * 13 Original Publication Year	
-		 * 14 Date Read	
+		 * 11 Number of Pages
+		 * 12 Year Published
+		 * 13 Original Publication Year
+		 * 14 Date Read
 		 * 15 Date Added
-		 * 16 Bookshelves with positions	
+		 * 16 Bookshelves with positions
 		 * 17 Bookshelves	(use to get genre)
 		 * 18 Exclusive Shelf	(use to get Read State)
-		 * 19 My Review	
-		 * 20 Spoiler	
-		 * 21 Private Notes	
-		 * 22 Read Count	
-		 * 23 Recommended For	
-		 * 24 Recommended By	
-		 * 25 Owned Copies	
-		 * 26 Original Purchase Date	
-		 * 27 Original Purchase Location	
-		 * 28 Condition	
-		 * 29 Condition Description	
+		 * 19 My Review
+		 * 20 Spoiler
+		 * 21 Private Notes
+		 * 22 Read Count
+		 * 23 Recommended For
+		 * 24 Recommended By
+		 * 25 Owned Copies
+		 * 26 Original Purchase Date
+		 * 27 Original Purchase Location
+		 * 28 Condition
+		 * 29 Condition Description
 		 * 30 BCID
 		 * 
 		 */
@@ -121,13 +121,13 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			book.setMyRating(parseInt(tokens[7]));
 			book.setAverageRating(parseFloat(tokens[8]));
 			book.setPublisher(tokens[9]);
-			book.setBinding(tokens[10]);			
+			book.setBinding(tokens[10]);
 			book.setNumberOfPages(parseInt(tokens[11]));
 			book.setYearOfPublication(parseInt(tokens[12]));
-			book.setOriginalPublicationYear(parseInt(tokens[13]));			
+			book.setOriginalPublicationYear(parseInt(tokens[13]));
 			book.setDateRead(convertDate(tokens[14]));
 			book.setDateAdded(convertDate(tokens[15]));
-			book.setBookshelves(getList(tokens[16]));			
+			book.setBookshelves(getList(tokens[16]));
 			// TODO maybe use this list to rebuild shelves in order?
 			book.setBookshelvesWithPositions(getList(tokens[17]));
 			book.setExclusiveShelf(tokens[18]);
@@ -148,12 +148,22 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			// enrich the data
 			final BookFormat format = BookFormat.parse(book.getBinding());
 			if(BookFormat.UNKNOWN.equals(format)){
-				logger.warn("{} has unknown format from binding: {}", 
+				logger.warn("{} has unknown format from binding: {}",
 						book.getTitle(), book.getBinding());
 			}
 			book.setFormat(format);
-			book.setGenre(getGenre(book.getBookshelves()));
 			
+			// validate audio book duration
+			if(BookFormat.AUDIO_BOOK.equals(book.getFormat())){
+				final Integer duration = book.getNumberOfPages();
+				if((duration!= null) && (duration > 50)){
+					// 50 hours is extremely long for an audio book warn about it.
+					logger.warn("{} has duration of {} hours", book.getTitle(), duration);
+				}
+			}
+			
+
+			book.setGenre(getGenre(book.getBookshelves()));
 			// TODO read state..
 			
 		} catch (IOException e) {
@@ -205,7 +215,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 					 * better?
 					 */
 					if(BookGenre.UNKNOWN.equals(genre)){
-						for(String shelf: bookshelves){						
+						for(String shelf: bookshelves){
 							switch(shelf){
 							case SHELF_NON_FICTION:
 								genre = BookGenre.NONFICTION;
@@ -264,7 +274,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 		String isbn = isbnInput;
 		
 		/* The ISBN seems to be of the form ="<NUMBER>. Knowing very little
-		 * about CSV formats, I'm not sure if this is meant to indicated 
+		 * about CSV formats, I'm not sure if this is meant to indicated
 		 * something special or what, but I'm simply stripping it off and
 		 * returning the number portion as a string for now.
 		 * 
@@ -291,9 +301,9 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	 * @return
 	 */
 	private Integer parseReadCount(String readCountStr){
-		/* This handling basically covers my own personal case where I don't 
-		 * remember the exact number of times I read a book and mark it as N+ 
-		 * to indicate I know I've read it at least N times, but may have read 
+		/* This handling basically covers my own personal case where I don't
+		 * remember the exact number of times I read a book and mark it as N+
+		 * to indicate I know I've read it at least N times, but may have read
 		 * it N+1 times. For simplicity I will simply parse this as N.
 		 * 
 		 * However like most things, the field is a text field, not a combo box
@@ -302,9 +312,9 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 		// default to zero
 		Integer readCount = 0;
 		
-		if(readCountStr != null){			
+		if(readCountStr != null){
 			if(readCountStr.endsWith("+")){
-				readCountStr = readCountStr.substring(0, 
+				readCountStr = readCountStr.substring(0,
 						readCountStr.length()-1);
 			}
 			
@@ -383,7 +393,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 					 * data enrichment post parsing? 
 					 */
 					if((contributor != null) && (!"".equals(contributor))){
-						contributors.add(getContributor(contributor, 
+						contributors.add(getContributor(contributor,
 								ContributorRole.UNKNOWN));
 					}
 				}
@@ -405,7 +415,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			final ContributorRole role){
 		Contributor author = null;
 		
-		if((contStr != null) && (!"".equals(contStr))){			
+		if((contStr != null) && (!"".equals(contStr))){
 			String[] nameTokens = contStr.split(" ");
 			
 			String firstName = contStr;
@@ -444,7 +454,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 					firstName = foundTokens.get(0);
 					middleName = foundTokens.get(1);
 					lastName = foundTokens.get(2);
-				}else if(foundTokens.size() > 3){					
+				}else if(foundTokens.size() > 3){
 					logger.warn("Found {} tokens: {}", foundTokens.size(), 
 							foundTokens);
 					
@@ -469,7 +479,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 				}
 			}
 			
-			author = new Contributor(firstName, middleName, lastName, 
+			author = new Contributor(firstName, middleName, lastName,
 					ContributorRole.AUTHOR);
 		}else{
 			logger.error("Contributor String is null/empty");
