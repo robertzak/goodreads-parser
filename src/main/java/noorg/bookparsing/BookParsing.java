@@ -18,9 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
-/**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,9 +76,13 @@ public class BookParsing {
 		// do some data enrichment
 		new GraphicNovelEnricher().enrichBooks(books);
 		
-		logger.info(new YearlyReportService(2015).generateReport(books, 
-				new DefaultBookFormater()));
+		// run reports
+		final int [] years = {2012, 2013, 2014, 2015};
 		
-		 
+		for(int year: years){
+			logger.info("*****************************************");
+			logger.info(new YearlyReportService(year).generateReport(books, 
+					new DefaultBookFormater()));
+		}
 	}
 }
