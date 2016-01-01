@@ -1,10 +1,13 @@
 package noorg.bookparsing.domain.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.types.BookFormat;
@@ -14,7 +17,7 @@ import noorg.bookparsing.report.sort.AscendingDateReadComparator;
 
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +31,21 @@ import noorg.bookparsing.report.sort.AscendingDateReadComparator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * <p>A yearly report is used to generate
+ * <p>A yearly report is used to generate overall details about your reading 
+ * for that year. 
+ * 
+ * This includes: 
+ * 
+ * <ul>
+ *  <li>Total Count</li>
+ *  <li>Reread Count</li>
+ * 	<li>counts by format, genre,  and rating</li>
+ *  <li>total and average page count</li>
+ *  <li>total and average audio hours</li>
+ *  <li>average rating</li>
+ *  <li>List of books</li>
+ *  <li>List of reread books</li>
+ * </ul>
  * 
  * @author Robert J. Zak
  *
@@ -36,24 +53,40 @@ import noorg.bookparsing.report.sort.AscendingDateReadComparator;
 public class YearlyReport extends AbstractReport{
 	
 	private int year;
-	private List<Book> books = new ArrayList<>();
+	private Set<Book> books = new HashSet<>();
+	private Set<Book> rereadBooks = new HashSet<>();
 	private Map<BookFormat, Integer> countsByFormat = new HashMap<>();
 	private Map<BookGenre, Integer> countsByGenre = new HashMap<>();
 	private Map<Integer, Integer> countsByRating = new HashMap<>();
 	private int totalPages;
+	private int totalPagesGraphicNovels;
 	private int totalHours;
 	private long totalRating;
 	
 	public YearlyReport(final int year){
 		this.year = year;
 	}
-
-	@Override
-	public void addBook(Book book) {
+	
+	/**
+	 * Add a book that's been reread.
+	 * @param book
+	 */
+	public void addRereadBook(final Book book){
 		if(book != null){
-			books.add(book);
-			
-			
+			rereadBooks.add(book);
+		}else{
+			logger.debug("Cannot add null book");
+		}
+	}
+
+	/**
+	 * Add a book read this year. This not only adds the book, but
+	 * adds details to this year's statistics.
+	 * 
+	 */
+	@Override
+	public void addBook(final Book book) {
+		if(book != null && books.add(book)){
 			final BookFormat format = book.getFormat();
 			incrementMapValue(countsByFormat, format);
 			
@@ -74,8 +107,15 @@ public class YearlyReport extends AbstractReport{
 						logger.warn("{} has unknown Book Format This will mess up the "
 								+ "report statistics related to page counts/hours", book);
 						break;
-					
 					}
+					
+					/* Keep track of pages from Graphic Novels separately for more
+					 * detailed statistics.
+					 */
+					if(BookFormat.GRAPHIC_NOVEL.equals(format)){
+						totalPagesGraphicNovels += pageCount;
+					}
+					
 				}else{
 					// TODO should we just add to page count by default?
 					logger.warn("{} has unknown Book Format This will mess up the "
@@ -95,6 +135,8 @@ public class YearlyReport extends AbstractReport{
 			if(rating != null){
 				totalRating += rating;
 			}
+		}else{
+			logger.debug("Cannot add null book");
 		}
 	}
 	
@@ -111,7 +153,7 @@ public class YearlyReport extends AbstractReport{
 	 * The list of books for the year.
 	 * @return
 	 */
-	public List<Book> getBooks() {
+	public Set<Book> getBooks() {
 		return books;
 	}
 
@@ -147,6 +189,23 @@ public class YearlyReport extends AbstractReport{
 	public int getTotalPages() {
 		return totalPages;
 	}
+	
+	/**
+	 * Return the sum of the page count for {@link BookFormat#GRAPHIC_NOVEL}
+	 * @return
+	 */
+	public int getTotalPagesGraphicNovel(){
+		return totalPagesGraphicNovels;
+	}
+	
+	/**
+	 * Return the sum of the page count for read books 
+	 * excluding any that are {@link BookFormat#GRAPHIC_NOVEL}
+	 * @return
+	 */
+	public int getTotalPagesExcludingGraphicNovels(){
+		return getTotalPages() - getTotalPagesGraphicNovel();
+	}
 
 	/**
 	 * Sum of length of all {@link BookFormat#AUDIO_BOOK}s
@@ -173,13 +232,30 @@ public class YearlyReport extends AbstractReport{
 	}
 	
 	/**
+	 * How many books reread this year
+	 * NOTE: This is VERY data dependent and therefore may not be accurate
+	 * @return
+	 */
+	public int getRereadCount(){
+		return rereadBooks.size();
+	}
+	
+	/**
 	 * Returns how many audio books listened to.
 	 * @return
 	 */
 	public int getTotalAudioBooks(){
+		return getFormatCount(BookFormat.AUDIO_BOOK);
+	}
+	
+	public int getTotalGraphicNovels(){
+		return getFormatCount(BookFormat.GRAPHIC_NOVEL);
+	}
+	
+	private int getFormatCount(final BookFormat format){
 		int total = 0;
 		
-		final Integer abCount = countsByFormat.get(BookFormat.AUDIO_BOOK);
+		final Integer abCount = countsByFormat.get(format);
 		if(abCount != null){
 			total = abCount;
 		}
@@ -189,11 +265,19 @@ public class YearlyReport extends AbstractReport{
 	
 	/**
 	 * How many books were read (ie NOT audio), this includes
-	 * all other {@link BookFormat}'s
+	 * all other {@link BookFormat}'s such as {@link BookFormat#GRAPHIC_NOVEL}
 	 * @return
 	 */
 	public int getTotalBooksRead(){
 		return getTotal() - getTotalAudioBooks();
+	}
+	
+	/**
+	 * Exclude {@link BookFormat#GRAPHIC_NOVEL} in the {@link #getTotalBooksRead()}
+	 * @return
+	 */
+	public int getTotalBooksReadExcludingGraphicNovels(){
+		return getTotalBooksRead() - getTotalGraphicNovels();
 	}
 	
 	public double getAverageRating(){
@@ -202,6 +286,16 @@ public class YearlyReport extends AbstractReport{
 	
 	public double getAveragePages(){
 		return getAverage(totalPages, getTotalBooksRead());
+	}
+	
+	/**
+	 * Exclude {@link BookFormat#GRAPHIC_NOVEL} from the average since
+	 * they will skew the data.
+	 * @return
+	 */
+	public double getAveragePagesExcludingGraphicNovels(){
+		final int count = totalPages - totalPagesGraphicNovels;
+		return getAverage(count, getTotalBooksReadExcludingGraphicNovels());
 	}
 	
 	public double getAveragesHours(){
@@ -226,30 +320,57 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Year: ").append(year).append("\n");
 		sb.append("Total Books: ").append(getTotal()).append("\n");
+		sb.append("Rereads: ").append(getRereadCount()).append("\n\n");
+		
+		sb.append("********************\n* Format Breakdown *\n********************\n");
 		sb.append(getCounts(countsByFormat)).append("\n");
+		
+		sb.append("*******************\n* Genre Breakdown *\n*******************\n");
 		sb.append(getCounts(countsByGenre)).append("\n");
 		
 		sb.append("Average Rating: ");
 		sb.append(getDoubleAsFixedDecimal(getAverageRating())).append("\n");
 		sb.append(getCounts(countsByRating)).append("\n");
 		
+		sb.append("Number of Books: ").append(getTotalBooksRead()).append("\n");
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");
 		sb.append("Average Pages: ");
-		sb.append(getDoubleAsFixedDecimal(getAveragePages())).append("\n");
+		sb.append(getDoubleAsFixedDecimal(getAveragePages())).append("\n\n");
 		
+		sb.append("Number of Books (Excluding Graphic Novels): ").append(getTotalBooksReadExcludingGraphicNovels()).append("\n");
+		sb.append("Total Pages (Excluding Graphic Novels): ").append(getTotalPagesExcludingGraphicNovels()).append("\n");
+		sb.append("Average Pages (Excluding Graphic Novels): ");
+		sb.append(getDoubleAsFixedDecimal(getAveragePagesExcludingGraphicNovels())).append("\n\n");
+		
+		sb.append("Number of Audiobooks: ").append(getTotalAudioBooks()).append("\n");
 		sb.append("Total Audio Hours: ").append(getTotalHours()).append("\n");
 		sb.append("Average Hours: ");
 		sb.append(getDoubleAsFixedDecimal(getAveragesHours())).append("\n\n");
 		
-		sb.append("Books:").append("\n");
+		sb.append("*******************\n");
+		sb.append("All Books:").append("\n");
+		sb.append(appendBooks(books, formatter));
+		
+		sb.append("*******************\n");
+		sb.append("Reread Books:").append("\n");
+		sb.append(appendBooks(new ArrayList<Book>(rereadBooks), formatter));
+		
+		return sb.toString();
+	}
+	
+	private String appendBooks(final Collection<Book> books, final BookFormatter formatter){
+		StringBuilder sb = new StringBuilder();
 		// TODO tabs or some better spacing..
 		// sort by read date
-		Collections.sort(books, new AscendingDateReadComparator());
+		final List<Book> bookList = new ArrayList<>(books);
+		Collections.sort(bookList, new AscendingDateReadComparator());
 		
 		sb.append(formatter.getFormatHeaders()).append("\n");
-		for(Book book: books){
+		for(Book book: bookList){
 			sb.append(formatter.format(book)).append("\n");
 		}
+		
+		sb.append("\n");		
 		
 		return sb.toString();
 	}

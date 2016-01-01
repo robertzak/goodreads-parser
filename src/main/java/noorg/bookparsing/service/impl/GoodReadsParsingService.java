@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.Contributor;
@@ -24,7 +26,7 @@ import au.com.bytecode.opencsv.CSVParser;
 
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,16 +55,22 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	private static final String SHELF_SCI_FI = "sci-fi";
 	private static final String SHELF_SCIENCE_FICTION = "science-fiction";
 	
+	/**
+	 * This prefix will be used to determine additional years a book
+	 * was read if shelved that way.
+	 * 
+	 * Ex: read-2012, read-2014 will add 2012 and 2014 to the list
+	 */
+	private static final String SHELF_YEAR_READ_PREFIX = "read-";
+	
 	// TODO move this?
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
 
 	public Book parse(String input) {
 		logger.debug("Parsing: {}", input);
-		// TODO  finish writing me, null check input
+		// TODO null check input
 		
 		Book book = new Book();
-		
-
 		
 		/* 
 		 * Good reads data..
@@ -154,6 +162,18 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			book.setFormat(format);
 			
 			// validate audio book duration
+			/* TODO Look into how we handle rereads done in audio. I prefer
+			 * to shelve only 1 copy of a book, so when I do a reread
+			 * in audio, the page count might be for the text and not the number
+			 * of hours, which will mess up the numbers.
+			 * 
+			 * Right now I'm not sure if those books are being counted as audio books or
+			 * not. I suspect they aren't being counted. If that's the case, nothing needs
+			 * to be done. Unfortunately there isn't a way to track both the page counts 
+			 * and the audio duration apart from adding a book twice (once for each format).
+			 * 
+			 * This may be necessary to get proper statistics on audio for a year. 
+			 */
 			if(BookFormat.AUDIO_BOOK.equals(book.getFormat())){
 				final Integer duration = book.getNumberOfPages();
 				if((duration!= null) && (duration > 50)){
@@ -165,6 +185,9 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 
 			book.setGenre(getGenre(book.getBookshelves()));
 			// TODO read state..
+			
+			// set the years read
+			book.setYearsRead(getYearsRead(book.getDateRead(), book.getBookshelves()));
 			
 		} catch (IOException e) {
 			logger.error("Problem parsing data", e);
@@ -331,7 +354,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	/**
 	 * Null safe integer parse. 
 	 * 
-	 * TODO Is there a 3rd party utility that could be used instead?
+	 * TODO Is there a 3rd party utility that could be used instead? Guava perhaps?
 	 * @param input
 	 * @return
 	 */
@@ -352,7 +375,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	/**
 	 * Null safe float parse. 
 	 * 
-	 * TODO Is there a 3rd party utility that could be used instead?
+	 * TODO Is there a 3rd party utility that could be used instead? Guava perhaps?
 	 * @param input
 	 * @return
 	 */
@@ -432,12 +455,15 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			}else{
 				logger.warn("Special handling of {} contributor tokens for string: {}", 
 						nameTokens.length, contStr);
-				/* TODO this may need to be less hacky. For now it kind of 
-				 * works. Some of these seem to have stray spaces in the 
-				 * middle that cause the split to screw up. I'm simply looking
-				 * for how many have I have and guessing..
+				/* TODO Can this be made less hacky? For now it kind of 
+				 * works. Some of these authors have extra spaces in the 
+				 * middle that cause the split to screw up. This is probably due 
+				 * to the way Goodreads handles multiple authors with the same name.
+				 * Each new author gets an extra space and it's really just guess and 
+				 * check at that point. 
+				 * 
+				 * I'm simply looking for how many tokens I have and guessing..
 				 */
-				
 				List<String> foundTokens = new ArrayList<>();
 				for(String token: nameTokens){
 					if(token != null && !"".equals(token)){
@@ -486,6 +512,43 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 		}
 		
 		return author;
+	}
+	
+	/**
+	 * Determine the years this book was read. 
+	 * By default it will use your book's read date.
+	 * 
+	 * <p>Additionally if you shelf your books by year it will add those years as well.
+	 * see: {@link #SHELF_YEAR_READ}
+	 * 
+	 * @param dateRead
+	 * @param shelfList
+	 * @return
+	 */
+	private Set<Integer> getYearsRead(Calendar dateRead, List<String> shelfList){
+		Set<Integer> yearsRead = new HashSet<>();
+		
+		// add the year of read date if set
+		if(dateRead != null){		
+			yearsRead.add(dateRead.get(Calendar.YEAR));
+		}
+		
+		// parse shelves for additional years
+		if(shelfList != null){
+			for(String shelf: shelfList){
+				if(shelf.startsWith(SHELF_YEAR_READ_PREFIX)){
+					// possible year shelf
+					final String yearToken = shelf.substring(SHELF_YEAR_READ_PREFIX.length());
+					try{
+						yearsRead.add(Integer.parseInt(yearToken));
+					}catch(Exception e){
+						logger.debug("Failed to convert {} into a year", yearToken, e);
+					}
+				}
+			}
+		}
+		
+		return yearsRead;
 	}
 	
 	/**

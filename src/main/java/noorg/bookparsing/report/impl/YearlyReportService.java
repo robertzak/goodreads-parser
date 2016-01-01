@@ -9,7 +9,7 @@ import noorg.bookparsing.report.format.BookFormatter;
 
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,16 @@ import noorg.bookparsing.report.format.BookFormatter;
  * 
  */
 public class YearlyReportService extends AbstractReportService {
-	// TODO change to support set of years?
+	/* TODO change to support set of years
+	 * Generate a YearlyReport for each year, then generate
+	 * statistics comparing those years 
+	 * 
+	 * (ex: deltas between counts for each year, mins, maxes, averages, etc)
+	 */
 	private final int reportYear;
 	
 
-	public YearlyReportService(int reportYear) {
+	public YearlyReportService(final int reportYear) {
 		super();
 		this.reportYear = reportYear;
 	}
@@ -44,35 +49,45 @@ public class YearlyReportService extends AbstractReportService {
 	public String generateReport(List<Book> books, BookFormatter formatter) {
 		StringBuilder sb = new StringBuilder();
 		
-		//sb.append("Book Count: ").append(books.size()). append("\n\n");
-		
-		//sb.append(formatter.getFormatHeaders()).append("\n");
-		
 		// TODO sort by year? and year end statistics..
 		
 		
 		YearlyReport report = new YearlyReport(reportYear);
 		for(Book book: books){
-			//sb.append(formatter.format(book)).append("\n");
 			
-			Calendar dateRead = book.getDateRead();
-			if(dateRead != null){
-				// TODO map of years
-				int yearRead = dateRead.get(Calendar.YEAR);
-				
-				if(yearRead == reportYear){
-					report.addBook(book);
-				}
-			}else{
-				// TODO how to handle unread books?
+			boolean bookAdded = false;
+			if(book.getYearsRead().contains(reportYear)){
+				report.addBook(book);
+				bookAdded = true;
 			}
+			
+			// Attempt to determine re-reads.
+			if(bookAdded){
+				
+				/* Check if this book has a read date different from report year.
+				 * This will rely on the user shelving data a certain way.
+				 */
+				Calendar dateRead = book.getDateRead();
+				if(dateRead != null){
+					final int yearRead = dateRead.get(Calendar.YEAR);
+					if(yearRead != reportYear){
+						report.addRereadBook(book);
+					}
+				}
+				
+				// Use their readCount (this may be more accurate)
+				final Integer readCount = book.getReadCount();
+				if(readCount != null && readCount> 1){
+					report.addRereadBook(book);
+				}
+			}
+			
+
 		}
-		
 		
 		sb.append(report.getReport());
 		
 		return sb.toString();
-
 	}
 
 }
