@@ -1,7 +1,9 @@
 package noorg.bookparsing.domain;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import noorg.bookparsing.domain.types.BookCondition;
 import noorg.bookparsing.domain.types.BookFormat;
@@ -9,7 +11,7 @@ import noorg.bookparsing.domain.types.BookGenre;
 import noorg.bookparsing.domain.types.ReadState;
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +73,7 @@ public class Book {
 	// Inferred/converted data
 	private BookFormat format;
 	private BookGenre genre;
+	private Set<Integer> yearsRead = new HashSet<>();
 
 	public String getId() {
 		return id;
@@ -190,6 +193,18 @@ public class Book {
 
 	public void setDateAdded(Calendar dateAdded) {
 		this.dateAdded = dateAdded;
+	}
+	
+	public boolean addYearRead(Integer year){
+		return yearsRead.add(year);
+	}
+
+	public Set<Integer> getYearsRead() {
+		return yearsRead;
+	}
+
+	public void setYearsRead(Set<Integer> yearsRead) {
+		this.yearsRead = yearsRead;
 	}
 
 	public List<String> getBookshelves() {
@@ -341,27 +356,45 @@ public class Book {
 	 * @return
 	 */
 	public String debugString() {
-		// TODO fix to use StringBuilder
-		return "Book [id=" + id + ", title=" + title + ", author=" + author
-				+ ", additionalContributors=" + additionalContributors
-				+ ", isbn=" + isbn + ", isbn13=" + isbn13 + ", myRating="
-				+ myRating + ", averageRating=" + averageRating
-				+ ", publisher=" + publisher + ", binding=" + binding
-				+ ", numberOfPages=" + numberOfPages + ", yearOfPublication="
-				+ yearOfPublication + ", originalPublicationYear="
-				+ originalPublicationYear + ", dateRead=" + dateRead
-				+ ", dateAdded=" + dateAdded + ", bookshelves=" + bookshelves
-				+ ", bookshelvesWithPositions=" + bookshelvesWithPositions
-				+ ", exclusiveShelf=" + exclusiveShelf
-				+ ", readState=" + readState + ", myReview=" + myReview
-				+ ", spoiler=" + spoiler + ", privateNotes=" + privateNotes
-				+ ", readCount=" + readCount + ", recommendedFor="
-				+ recommendedFor + ", recommendedBy=" + recommendedBy
-				+ ", ownedCopies=" + ownedCopies + ", purchaseDate="
-				+ purchaseDate + ", purchaseLocation=" + purchaseLocation
-				+ ", condition=" + condition + ", conditionDescription="
-				+ conditionDescription + ", bcid=" + bcid + ", format="
-				+ format + ", genre=" + genre + "]";
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Book [id=").append(id);
+		sb.append(", title=").append(title);
+		sb.append(", author=").append(author);
+		sb.append(", additionalContributors=").append(additionalContributors);
+		sb.append(", isbn=").append(isbn);
+		sb.append(", isbn13=").append(isbn13);
+		sb.append(", myRating=").append(myRating);
+		sb.append(", averageRating=").append(averageRating);
+		sb.append(", publisher=").append(publisher);
+		sb.append(", binding=").append(binding);
+		sb.append(", numberOfPages=").append(numberOfPages);
+		sb.append(", yearOfPublication=").append(yearOfPublication);
+		sb.append(", originalPublicationYear=").append(originalPublicationYear);
+		sb.append(", dateRead=").append(dateRead);
+		sb.append(", dateAdded=").append(dateAdded);
+		sb.append(", yearsRead=").append(yearsRead);
+		sb.append(", bookshelves=").append(bookshelves);
+		sb.append(", bookshelvesWithPositions=").append(bookshelvesWithPositions);
+		sb.append(", exclusiveShelf=").append(exclusiveShelf);
+		sb.append(", readState=").append(readState);
+		sb.append(", myReview=").append(myReview);
+		sb.append(", spoiler=").append(spoiler);
+		sb.append(", privateNotes=").append(privateNotes);
+		sb.append(", readCount=").append(readCount);
+		sb.append(", recommendedFor=").append(recommendedFor);
+		sb.append(", recommendedBy=").append(recommendedBy);
+		sb.append(", ownedCopies=").append(ownedCopies);
+		sb.append(", purchaseDate=").append(purchaseDate);
+		sb.append(", purchaseLocation=").append(purchaseLocation);
+		sb.append(", condition=").append(condition);
+		sb.append(", conditionDescription=").append(conditionDescription);
+		sb.append(", bcid=").append(bcid);
+		sb.append(", format=").append(format);
+		sb.append(", genre=").append(genre);
+		sb.append("]");
+		
+		return sb.toString();
 	}
 
 	
