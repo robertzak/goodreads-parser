@@ -1,6 +1,6 @@
 package noorg.bookparsing.domain;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,8 +51,8 @@ public class Book {
 	private Integer numberOfPages;
 	private Integer yearOfPublication;
 	private Integer originalPublicationYear;
-	private Calendar dateRead;
-	private Calendar dateAdded;
+	private LocalDate dateRead;
+	private LocalDate dateAdded;
 	private List<String> bookshelves;
 	private List<String> bookshelvesWithPositions;
 	private String exclusiveShelf;
@@ -64,7 +64,7 @@ public class Book {
 	private String recommendedFor;
 	private String recommendedBy;
 	private Integer ownedCopies;
-	private Calendar purchaseDate;
+	private LocalDate purchaseDate;
 	private String purchaseLocation;
 	private BookCondition condition;
 	private String conditionDescription;
@@ -179,19 +179,19 @@ public class Book {
 		this.originalPublicationYear = originalPublicationYear;
 	}
 
-	public Calendar getDateRead() {
+	public LocalDate getDateRead() {
 		return dateRead;
 	}
 
-	public void setDateRead(Calendar dateRead) {
+	public void setDateRead(LocalDate dateRead) {
 		this.dateRead = dateRead;
 	}
 
-	public Calendar getDateAdded() {
+	public LocalDate getDateAdded() {
 		return dateAdded;
 	}
 
-	public void setDateAdded(Calendar dateAdded) {
+	public void setDateAdded(LocalDate dateAdded) {
 		this.dateAdded = dateAdded;
 	}
 	
@@ -295,11 +295,11 @@ public class Book {
 		this.ownedCopies = ownedCopies;
 	}
 
-	public Calendar getPurchaseDate() {
+	public LocalDate getPurchaseDate() {
 		return purchaseDate;
 	}
 
-	public void setPurchaseDate(Calendar purchaseDate) {
+	public void setPurchaseDate(LocalDate purchaseDate) {
 		this.purchaseDate = purchaseDate;
 	}
 

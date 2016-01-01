@@ -1,16 +1,18 @@
 package noorg.bookparsing.service.impl;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import au.com.bytecode.opencsv.CSVParser;
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.Contributor;
 import noorg.bookparsing.domain.types.BookCondition;
@@ -18,11 +20,6 @@ import noorg.bookparsing.domain.types.BookFormat;
 import noorg.bookparsing.domain.types.BookGenre;
 import noorg.bookparsing.domain.types.ContributorRole;
 import noorg.bookparsing.service.ParsingService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import au.com.bytecode.opencsv.CSVParser;
 
 
 /**
@@ -64,7 +61,8 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	private static final String SHELF_YEAR_READ_PREFIX = "read-";
 	
 	// TODO move this?
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm/dd");
+	protected static final DateTimeFormatter GOODREADS_DATE_FORMAT = 
+			DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
 	public Book parse(String input) {
 		logger.debug("Parsing: {}", input);
@@ -267,25 +265,19 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	 * @param dateStr
 	 * @return
 	 */
-	private Calendar convertDate(final String dateStr){
-		Calendar cal = null;
+	private LocalDate convertDate(final String dateStr){
+		LocalDate date = null;
 		
 		if((dateStr != null) && (!"".equals(dateStr))){
-			Date date = null;
 			
 			try{
-				date = sdf.parse(dateStr);
-			}catch(ParseException e){
+				date = LocalDate.parse(dateStr, GOODREADS_DATE_FORMAT);
+			}catch(Exception e){
 				logger.error("Unable to parse date: {}", dateStr, e);
-			}
-			
-			if(date != null){
-				cal = new GregorianCalendar();
-				cal.setTime(date);
 			}
 		}
 		
-		return cal;
+		return date;
 	}
 	
 	/**
@@ -525,12 +517,12 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	 * @param shelfList
 	 * @return
 	 */
-	private Set<Integer> getYearsRead(Calendar dateRead, List<String> shelfList){
+	private Set<Integer> getYearsRead(LocalDate dateRead, List<String> shelfList){
 		Set<Integer> yearsRead = new HashSet<>();
 		
 		// add the year of read date if set
 		if(dateRead != null){		
-			yearsRead.add(dateRead.get(Calendar.YEAR));
+			yearsRead.add(dateRead.getYear());
 		}
 		
 		// parse shelves for additional years

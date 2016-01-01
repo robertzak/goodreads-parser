@@ -1,6 +1,6 @@
 package noorg.bookparsing.report.impl;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 
 import noorg.bookparsing.domain.Book;
@@ -67,9 +67,9 @@ public class YearlyReportService extends AbstractReportService {
 				/* Check if this book has a read date different from report year.
 				 * This will rely on the user shelving data a certain way.
 				 */
-				Calendar dateRead = book.getDateRead();
+				LocalDate dateRead = book.getDateRead();
 				if(dateRead != null){
-					final int yearRead = dateRead.get(Calendar.YEAR);
+					final int yearRead = dateRead.getYear();
 					if(yearRead != reportYear){
 						report.addRereadBook(book);
 					}
@@ -81,8 +81,6 @@ public class YearlyReportService extends AbstractReportService {
 					report.addRereadBook(book);
 				}
 			}
-			
-
 		}
 		
 		sb.append(report.getReport());

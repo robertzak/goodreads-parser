@@ -353,7 +353,7 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("*******************\n");
 		sb.append("Reread Books:").append("\n");
-		sb.append(appendBooks(new ArrayList<Book>(rereadBooks), formatter));
+		sb.append(appendBooks(rereadBooks, formatter));
 		
 		return sb.toString();
 	}
