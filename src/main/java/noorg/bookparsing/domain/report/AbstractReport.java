@@ -1,8 +1,11 @@
 package noorg.bookparsing.domain.report;
 
 import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
 import noorg.bookparsing.util.Utils;
 
@@ -37,10 +40,28 @@ public abstract class AbstractReport implements Report{
 	protected static final DecimalFormat DECIMAL_FORMAT = 
 			new DecimalFormat("###.##");
 
+	protected Set<Book> books = new HashSet<>();
+
 	@Override
 	public String toString(){
 		// getReport doubles as toString by default
 		return getReport();
+	}
+	
+	/**
+	 * Default implementation simply adds the book to the set. 
+	 * Override to add additional functionality.
+	 */
+	@Override
+	public boolean addBook(final Book book) {
+		boolean added = false;
+		if(book != null){ 
+			added = books.add(book);
+		}else{
+			logger.debug("Cannot add null book");
+		}
+		
+		return added;
 	}
 	
 	@Override

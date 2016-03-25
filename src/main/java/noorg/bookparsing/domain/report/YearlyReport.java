@@ -53,7 +53,6 @@ import noorg.bookparsing.report.sort.AscendingDateReadComparator;
 public class YearlyReport extends AbstractReport{
 	
 	private int year;
-	private Set<Book> books = new HashSet<>();
 	private Set<Book> rereadBooks = new HashSet<>();
 	private Map<BookFormat, Integer> countsByFormat = new HashMap<>();
 	private Map<BookGenre, Integer> countsByGenre = new HashMap<>();
@@ -85,8 +84,10 @@ public class YearlyReport extends AbstractReport{
 	 * 
 	 */
 	@Override
-	public void addBook(final Book book) {
-		if(book != null && books.add(book)){
+	public boolean addBook(final Book book) {
+		boolean added = super.addBook(book);
+		
+		if(added){
 			final BookFormat format = book.getFormat();
 			incrementMapValue(countsByFormat, format);
 			
@@ -135,9 +136,9 @@ public class YearlyReport extends AbstractReport{
 			if(rating != null){
 				totalRating += rating;
 			}
-		}else{
-			logger.debug("Cannot add null book");
 		}
+		
+		return added;
 	}
 	
 	/**

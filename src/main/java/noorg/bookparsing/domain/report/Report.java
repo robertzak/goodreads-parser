@@ -30,8 +30,9 @@ public interface Report {
 	/**
 	 * Add a book to the report;
 	 * @param book
+	 * @return true if added
 	 */
-	public void addBook(final Book book);
+	public boolean addBook(final Book book);
 	
 	/**
 	 * Covert this report to a string using the {@link DefaultBookFormater}
