@@ -1,5 +1,6 @@
 package noorg.bookparsing.domain;
 
+import noorg.bookparsing.domain.types.ContributorGender;
 import noorg.bookparsing.domain.types.ContributorRole;
 
 
@@ -28,6 +29,7 @@ public class Contributor {
 	private String middleName;
 	private String lastName;
 	private ContributorRole role;
+	private ContributorGender gender;
 	
 	/**
 	 * Create a blank Contributor
@@ -59,6 +61,14 @@ public class Contributor {
 		this.firstName = firstName;
 	}
 	
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
 	public String getLastName() {
 		return lastName;
 	}
@@ -73,6 +83,14 @@ public class Contributor {
 	
 	public void setRole(ContributorRole role) {
 		this.role = role;
+	}
+
+	public ContributorGender getGender() {
+		return gender;
+	}
+
+	public void setGender(ContributorGender gender) {
+		this.gender = gender;
 	}
 
 	@Override
@@ -130,6 +148,7 @@ public class Contributor {
 		sb.append("Contributor [firstName=").append(firstName);
 		sb.append(", middleName=").append(middleName);
 		sb.append(", lastName=").append(lastName);
+		sb.append(", gender=").append(gender);
 		sb.append(", role=").append(role).append( "]");
 		
 		return sb.toString();
