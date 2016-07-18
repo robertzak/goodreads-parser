@@ -1,11 +1,7 @@
 package noorg.bookparsing.domain.report;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +9,6 @@ import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.types.BookFormat;
 import noorg.bookparsing.domain.types.BookGenre;
 import noorg.bookparsing.report.format.BookFormatter;
-import noorg.bookparsing.report.sort.AscendingDateReadComparator;
 
 
 /**
@@ -225,14 +220,6 @@ public class YearlyReport extends AbstractReport{
 	}
 	
 	/**
-	 * How many books (regardless of {@link BookFormat}) done this year
-	 * @return
-	 */
-	public int getTotal(){
-		return books.size();
-	}
-	
-	/**
 	 * How many books reread this year
 	 * NOTE: This is VERY data dependent and therefore may not be accurate
 	 * @return
@@ -350,28 +337,11 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("*******************\n");
 		sb.append("All Books:").append("\n");
-		sb.append(appendBooks(books, formatter));
+		sb.append(formatBookList(books, formatter));
 		
 		sb.append("*******************\n");
 		sb.append("Reread Books:").append("\n");
-		sb.append(appendBooks(rereadBooks, formatter));
-		
-		return sb.toString();
-	}
-	
-	private String appendBooks(final Collection<Book> books, final BookFormatter formatter){
-		StringBuilder sb = new StringBuilder();
-		// TODO tabs or some better spacing..
-		// sort by read date
-		final List<Book> bookList = new ArrayList<>(books);
-		Collections.sort(bookList, new AscendingDateReadComparator());
-		
-		sb.append(formatter.getFormatHeaders()).append("\n");
-		for(Book book: bookList){
-			sb.append(formatter.format(book)).append("\n");
-		}
-		
-		sb.append("\n");		
+		sb.append(formatBookList(rereadBooks, formatter));
 		
 		return sb.toString();
 	}

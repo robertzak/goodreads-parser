@@ -10,6 +10,7 @@ import java.util.List;
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.enrich.GraphicNovelEnricher;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
+import noorg.bookparsing.report.impl.GenreReportService;
 import noorg.bookparsing.report.impl.YearlyReportService;
 import noorg.bookparsing.service.ParsingService;
 import noorg.bookparsing.service.impl.GoodReadsParsingService;
@@ -77,12 +78,15 @@ public class BookParsing {
 		new GraphicNovelEnricher().enrichBooks(books);
 		
 		// run reports
-		final int [] years = {2012, 2013, 2014, 2015};
+		final int [] years = {2012, 2013, 2014, 2015, 2016};
 		
 		for(int year: years){
 			logger.info("*****************************************");
 			logger.info(new YearlyReportService(year).generateReport(books, 
 					new DefaultBookFormater()));
 		}
+		
+		logger.info(new GenreReportService().generateReport(books, 
+				new DefaultBookFormater()));
 	}
 }

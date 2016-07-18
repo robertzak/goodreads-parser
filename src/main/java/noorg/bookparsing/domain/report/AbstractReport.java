@@ -1,12 +1,18 @@
 package noorg.bookparsing.domain.report;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.report.format.BookFormatter;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
+import noorg.bookparsing.report.sort.AscendingDateReadComparator;
 import noorg.bookparsing.util.Utils;
 
 import org.slf4j.Logger;
@@ -67,6 +73,37 @@ public abstract class AbstractReport implements Report{
 	@Override
 	public String getReport() {
 		return getReport(new DefaultBookFormater());
+	}
+	
+	/**
+	 * How many books in this report
+	 * @return
+	 */
+	public int getTotal(){
+		return books.size();
+	}
+	
+	/**
+	 * 
+	 * @param books
+	 * @param formatter
+	 * @return
+	 */
+	protected String formatBookList(final Collection<Book> books, final BookFormatter formatter){
+		StringBuilder sb = new StringBuilder();
+		// TODO tabs or some better spacing..
+		// sort by read date
+		final List<Book> bookList = new ArrayList<>(books);
+		Collections.sort(bookList, new AscendingDateReadComparator());
+		
+		sb.append(formatter.getFormatHeaders()).append("\n");
+		for(Book book: bookList){
+			sb.append(formatter.format(book)).append("\n");
+		}
+		
+		sb.append("\n");		
+		
+		return sb.toString();
 	}
 	
 	/**
