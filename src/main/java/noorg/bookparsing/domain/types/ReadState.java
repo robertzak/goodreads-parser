@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public enum ReadState {
-	ABANDONED, CURRENTLY_READING, READ, TO_READ, UNKNOWN;
+	ABANDONED, CURRENTLY_READING, ON_HOLD, READ, TO_READ, UNKNOWN;
 	
 	private static final Logger logger = LoggerFactory.getLogger(
 			ReadState.class);
@@ -33,6 +33,7 @@ public enum ReadState {
 	private static final String CUSTOM_ABANDONED = "abandoned";
 	// For the Sword & Laser folks
 	private static final String CUSTOM_LEMMED = "lemmed";
+	private static final String CUSTOM_ON_HOLD = "on-hold";
 	private static final String GR_CURRENTLY_READING = "currently-reading";
 	private static final String GR_READ = "read";
 	private static final String GR_TO_READ = "to-read";
@@ -56,6 +57,9 @@ public enum ReadState {
 			case CUSTOM_ABANDONED:
 			case CUSTOM_LEMMED:
 				state = ABANDONED;
+				break;
+			case CUSTOM_ON_HOLD:
+				state = ON_HOLD;
 				break;
 			case GR_CURRENTLY_READING:
 				state = CURRENTLY_READING;
