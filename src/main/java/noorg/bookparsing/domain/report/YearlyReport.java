@@ -72,70 +72,79 @@ public class YearlyReport extends AbstractReport{
 			logger.debug("Cannot add null book");
 		}
 	}
+	
+
 
 	/**
-	 * Add a book read this year. This not only adds the book, but
-	 * adds details to this year's statistics.
-	 * 
+	 * Add details to the year's statistics
 	 */
 	@Override
-	public boolean addBook(final Book book) {
-		boolean added = super.addBook(book);
+	protected void processAddedBook(Book book) {
+		final BookFormat format = book.getFormat();
+		incrementMapValue(countsByFormat, format);
 		
-		if(added){
-			final BookFormat format = book.getFormat();
-			incrementMapValue(countsByFormat, format);
-			
-			final Integer pageCount = book.getNumberOfPages();
-			if(pageCount != null){
-				if(format != null){
-					switch(format){
-					case AUDIO_BOOK:
-						totalHours += pageCount;
-						break;
-					case BOOK:
-					case EBOOK:
-					case GRAPHIC_NOVEL:
-						totalPages += pageCount;
-						break;
-					case UNKNOWN:
-					default:
-						logger.warn("{} has unknown Book Format This will mess up the "
-								+ "report statistics related to page counts/hours", book);
-						break;
-					}
-					
-					/* Keep track of pages from Graphic Novels separately for more
-					 * detailed statistics.
-					 */
-					if(BookFormat.GRAPHIC_NOVEL.equals(format)){
-						totalPagesGraphicNovels += pageCount;
-					}
-					
-				}else{
-					// TODO should we just add to page count by default?
+		final Integer pageCount = book.getNumberOfPages();
+		if(pageCount != null){
+			if(format != null){
+				switch(format){
+				case AUDIO_BOOK:
+					totalHours += pageCount;
+					break;
+				case BOOK:
+				case EBOOK:
+				case GRAPHIC_NOVEL:
+					totalPages += pageCount;
+					break;
+				case UNKNOWN:
+				default:
 					logger.warn("{} has unknown Book Format This will mess up the "
-						+ "report statistics related to page counts/hours", book);
+							+ "report statistics related to page counts/hours", book);
+					break;
 				}
+				
+				/* Keep track of pages from Graphic Novels separately for more
+				 * detailed statistics.
+				 */
+				if(BookFormat.GRAPHIC_NOVEL.equals(format)){
+					totalPagesGraphicNovels += pageCount;
+				}
+				
 			}else{
-				logger.warn("{} has unknown page count. This will mess up the "
-						+ "report statistics related to page counts/hours", book);
+				// TODO should we just add to page count by default?
+				logger.warn("{} has unknown Book Format This will mess up the "
+					+ "report statistics related to page counts/hours", book);
 			}
-			
-			
-			incrementMapValue(countsByGenre, book.getGenre());
-			
-			final Integer rating = book.getMyRating();
-			incrementMapValue(countsByRating, rating);
-			
-			if(rating != null){
-				totalRating += rating;
+		}else{
+			logger.warn("{} has unknown page count. This will mess up the "
+					+ "report statistics related to page counts/hours", book);
+		}
+		
+		
+		incrementMapValue(countsByGenre, book.getGenre());
+		
+		final Integer rating = book.getMyRating();
+		incrementMapValue(countsByRating, rating);
+		
+		if(rating != null){
+			totalRating += rating;
+		}
+	}
+	
+	@Override
+	protected boolean shouldAddBook(Book book) {
+		boolean addBook = false;
+		
+		// only add the book if it matches the report year
+		Set<Integer> yearsRead = book.getYearsRead();
+		if(yearsRead != null){
+			if(yearsRead.contains(getYear())){
+				addBook = true;
 			}
 		}
 		
-		return added;
+		return addBook;
 	}
-	
+
 	/**
 	 * The year of the report.
 	 * 

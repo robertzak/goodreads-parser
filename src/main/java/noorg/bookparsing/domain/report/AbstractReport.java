@@ -61,13 +61,39 @@ public abstract class AbstractReport implements Report{
 	@Override
 	public boolean addBook(final Book book) {
 		boolean added = false;
-		if(book != null){ 
-			added = books.add(book);
+		if(book != null){
+			if(shouldAddBook(book)){
+				added = books.add(book);
+				processAddedBook(book);
+			}
 		}else{
 			logger.debug("Cannot add null book");
 		}
 		
 		return added;
+	}
+	
+	/**
+	 * The base class will add the book to the Set, but each report may
+	 * need to do additional processing.
+	 * 
+	 * TODO make this an overridable empty implementation instead of forcing
+	 * the subclass to implement? So far both concrete reports will use it..
+	 * 
+	 * @param book The book being added
+	 * 
+	 */
+	protected abstract void processAddedBook(final Book book);
+	
+	/**
+	 * Override this method to add criteria for when to add a book to the report.
+	 * The default implementation is to add all non-null books.
+	 * 
+	 * @param book the potential book to add
+	 * @return
+	 */
+	protected boolean  shouldAddBook(final Book book){
+		return true;
 	}
 	
 	@Override

@@ -50,29 +50,33 @@ public class GenreReport extends AbstractReport {
 		super();
 		this.genre = genre;
 	}
-	/**
-	 * Add a book read this year. This not only adds the book, but
-	 * adds details to this year's statistics.
-	 * 
-	 */
+	
 	@Override
-	public boolean addBook(final Book book) {
-		boolean added = super.addBook(book);
+	protected boolean shouldAddBook(Book book) {
+		boolean addBook = false;
 		
-		if(added){
-			Set<Integer> years = book.getYearsRead();
-			
-			// if added, count by year
-			if((years != null) && (!years.isEmpty())){
-				for(Integer bookYear: years){
-					incrementYear(bookYear, book);
-				}
-			}else{
-				incrementYear(UNKNOWN_YEAR, book);
-			}
+		// only add books that have been read
+		Set<Integer> yearsRead = book.getYearsRead();
+		if((yearsRead != null) && (yearsRead.size()>0)){
+			addBook = true;
 		}
 		
-		return added;
+		return addBook;
+	}	
+
+	@Override
+	protected void processAddedBook(Book book) {
+		Set<Integer> years = book.getYearsRead();
+		
+		// if added, count by year
+		if((years != null) && (!years.isEmpty())){
+			for(Integer bookYear: years){
+				incrementYear(bookYear, book);
+			}
+		}else{
+			incrementYear(UNKNOWN_YEAR, book);
+		}
+		
 	}
 	
 	private void incrementYear(final Integer bookYear, final Book book){
@@ -109,16 +113,17 @@ public class GenreReport extends AbstractReport {
 			// TODO null check on year?
 			if(yearBooks != null){
 				if(UNKNOWN_YEAR == year){
-					sb.append("\n\tNone: ");
+					sb.append("\nNone: ");
 				}else{
-					sb.append("\n\t").append(year).append(": ");
+					sb.append("\n").append(year).append(": ");
 				}
 				
 				sb.append(yearBooks.size());
+				sb.append("\n\n");
+				sb.append(formatBookList(yearBooks, formatter));
 			}
 		}
 		
 		return sb.toString();
 	}
-
 }
