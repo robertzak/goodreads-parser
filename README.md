@@ -74,7 +74,7 @@ The core of the reporting are the domain objects that add one or [Book](src/main
 
 - [AbstractReport](src/main/java/noorg/bookparsing/domain/report/AbstractReport.java) - Shared Report functionality.
 - [GenreReport](src/main/java/noorg/bookparsing/domain/report/GenreReport.java) - Report about a specific [Genre](src/main/java/noorg/bookparsing/domain/types/BookGenre.java)
-- [YearlyReport](src/main/java/noorg/bookparsing/domain/report/YearlyReport.java) - Report about a specifi year
+- [YearlyReport](src/main/java/noorg/bookparsing/domain/report/YearlyReport.java) - Report about a specific year
 
 ### Services
 
