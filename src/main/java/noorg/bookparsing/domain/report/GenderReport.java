@@ -1,6 +1,6 @@
 package noorg.bookparsing.domain.report;
 
-import noorg.bookparsing.domain.types.BookGenre;
+import noorg.bookparsing.domain.types.ContributorGender;
 
 /**
  * <p>Copyright 2016 Robert J. Zak
@@ -31,22 +31,21 @@ import noorg.bookparsing.domain.types.BookGenre;
  * @author Robert J. Zak
  *
  */
-public class GenreReport extends AbstractMultipleYearReport {
-	private BookGenre genre;
-
-	public GenreReport(BookGenre genre) {
+public class GenderReport extends AbstractMultipleYearReport {
+	private ContributorGender gender;
+	
+	public GenderReport(ContributorGender gender) {
 		super();
-		this.genre = genre;
+		this.gender = gender;
 	}
 
 	@Override
 	protected String getReportHeader() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("Genre: ").append(genre);
+		sb.append("Gender: ").append(gender);
 		
 		return sb.toString();
 	}
 
-	
 }

@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.enrich.ContributorGenderEnricher;
 import noorg.bookparsing.enrich.GraphicNovelEnricher;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
+import noorg.bookparsing.report.impl.GenderReportService;
 import noorg.bookparsing.report.impl.GenreReportService;
 import noorg.bookparsing.report.impl.YearlyReportService;
 import noorg.bookparsing.service.ParsingService;
@@ -76,10 +78,12 @@ public class BookParsing {
 		
 		// do some data enrichment
 		new GraphicNovelEnricher().enrichBooks(books);
+		new ContributorGenderEnricher().enrichBooks(books);
 		
 		// run reports
 		final int [] years = {2012, 2013, 2014, 2015, 2016};
 		
+		logger.info("Yearly Reports:");
 		for(int year: years){
 			logger.info("*****************************************");
 			logger.info(new YearlyReportService(year).generateReport(books, 
@@ -87,6 +91,9 @@ public class BookParsing {
 		}
 		
 		logger.info(new GenreReportService().generateReport(books, 
+				new DefaultBookFormater()));
+		
+		logger.info(new GenderReportService().generateReport(books, 
 				new DefaultBookFormater()));
 	}
 }

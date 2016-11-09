@@ -56,8 +56,7 @@ public class GenreReportService extends AbstractReportService {
 			if(report.addBook(book)){
 				totalBooks++;
 			}else{
-				// TODO debug
-				logger.info("Skipped book: {}", formatter.format(book));
+				logger.debug("Skipped book: {}", formatter.format(book));
 			}
 		}
 		
