@@ -96,6 +96,7 @@ Once your data has been parsed/enriched, you want to do something with it. I've 
 The core of the reporting are the domain objects that add one or [Book](src/main/java/noorg/bookparsing/domain/Book.java) objects to a [Report](src/main/java/noorg/bookparsing/domain/report/Report.java).
 
 - [AbstractReport](src/main/java/noorg/bookparsing/domain/report/AbstractReport.java) - Shared Report functionality.
+- [GenderReport](src/main/java/noorg/bookparsing/domain/report/GenderReport.java) - Report about a specific [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java)
 - [GenreReport](src/main/java/noorg/bookparsing/domain/report/GenreReport.java) - Report about a specific [Genre](src/main/java/noorg/bookparsing/domain/types/BookGenre.java)
 - [YearlyReport](src/main/java/noorg/bookparsing/domain/report/YearlyReport.java) - Report about a specific year
 
@@ -105,6 +106,7 @@ So far there is one service interface: [ReportService](src/main/java/noorg/bookp
 
 I've created the following concrete implementations so far:
 
+- [GenderReportService](src/main/java/noorg/bookparsing/report/impl/GenderReportService.java) - Creates a report for each [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) you've read and outputs a genre-by-genre breakdown to allow you to evaluate your reading habbits from an author gender perspective.
 - [GenreReportService](src/main/java/noorg/bookparsing/report/impl/GenreReportService.java) - Creates a report for each [Genre](src/main/java/noorg/bookparsing/domain/types/BookGenre.java) you've read and outputs a genre-by-genre breakdown to allow you to evaluate your reading habbits from a genre perspective.
 - [YearlyReportService](src/main/java/noorg/bookparsing/report/impl/YearlyReportService.java) - Create a report for the year specified and output the results. Eventually this service should take a list of years instead moving functionality out of [BookParsing](src/main/java/noorg/bookparsing/BookParsing.java) that is better suited in the service.
 
