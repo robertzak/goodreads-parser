@@ -52,6 +52,7 @@ public class YearlyReport extends AbstractReport{
 	private Map<BookFormat, Integer> countsByFormat = new HashMap<>();
 	private Map<BookGenre, Integer> countsByGenre = new HashMap<>();
 	private Map<Integer, Integer> countsByRating = new HashMap<>();
+	private Map<Integer, Integer> countsByYearPublished = new HashMap<>();
 	private int totalPages;
 	private int totalPagesGraphicNovels;
 	private int totalHours;
@@ -125,6 +126,9 @@ public class YearlyReport extends AbstractReport{
 		final Integer rating = book.getMyRating();
 		incrementMapValue(countsByRating, rating);
 		
+		final Integer yearPublished = book.getYearOfPublication();
+		incrementMapValue(countsByYearPublished, yearPublished);
+		
 		if(rating != null){
 			totalRating += rating;
 		}
@@ -184,6 +188,14 @@ public class YearlyReport extends AbstractReport{
 	 */
 	public Map<Integer, Integer> getCountsByRating() {
 		return countsByRating;
+	}
+
+	/**
+	 * A map of counts of the books by the year they were published
+	 * @return
+	 */
+	public Map<Integer, Integer> getCountsByYearPublished() {
+		return countsByYearPublished;
 	}
 
 	/**
@@ -328,6 +340,9 @@ public class YearlyReport extends AbstractReport{
 		sb.append("Average Rating: ");
 		sb.append(getDoubleAsFixedDecimal(getAverageRating())).append("\n");
 		sb.append(getCounts(countsByRating)).append("\n");
+		
+		sb.append("Years Published:\n");
+		sb.append(getCounts(countsByYearPublished)).append("\n");
 		
 		sb.append("Number of Books: ").append(getTotalBooksRead()).append("\n");
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");

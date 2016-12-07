@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.report.format.BookFormatter;
@@ -169,7 +171,10 @@ public abstract class AbstractReport implements Report{
 	protected String getCounts(final Map<?,Integer> map){
 		StringBuilder sb = new StringBuilder();
 		
-		for(Object key: map.keySet()){
+		// Sort the Keys
+		SortedSet<Object> sortedKeys = new TreeSet<Object>(map.keySet());
+		
+		for(Object key: sortedKeys){
 			final Integer count = map.get(key);
 			final String countStr = Utils.getString(count);
 			final String percent = getPercentAsString(count);
