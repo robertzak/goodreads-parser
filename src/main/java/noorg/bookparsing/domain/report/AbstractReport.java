@@ -161,7 +161,7 @@ public abstract class AbstractReport implements Report{
 	/**
 	 * Helper to convert a map into rows of output of the form:
 	 * 
-	 * Total KEY Count: VALUE
+	 * Total KEY Count: VALUE (PERCENT)
 	 * 
 	 * @param map
 	 * @return
@@ -170,12 +170,32 @@ public abstract class AbstractReport implements Report{
 		StringBuilder sb = new StringBuilder();
 		
 		for(Object key: map.keySet()){
-			String value = Utils.getString(map.get(key));
-			sb.append("Total ").append(key).append(" Count: ");
-			sb.append(value).append("\n");
+			final Integer count = map.get(key);
+			final String countStr = Utils.getString(count);
+			final String percent = getPercentAsString(count);
+			
+			sb.append("Total ").append(key).append(" Count: ").append(countStr);
+			sb.append(" (").append(percent).append("%)").append("\n");
 		}
 		
 		return sb.toString();
+	}
+	
+	/**
+	 * Helper to determine the percentage of total books rounded to
+	 * two decimal places.
+	 * 
+	 * @param count
+	 * @return
+	 */
+	private String getPercentAsString(final Integer count){
+		double percent = 0.0;
+		
+		if(count != null){
+			percent = ((double)(count*100))/books.size();
+		}
+		
+		return String.format("%.2f", percent);
 	}
 	
 
