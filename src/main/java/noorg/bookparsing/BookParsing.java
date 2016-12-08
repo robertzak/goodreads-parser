@@ -81,14 +81,9 @@ public class BookParsing {
 		new ContributorGenderEnricher().enrichBooks(books);
 		
 		// run reports
-		final int [] years = {2012, 2013, 2014, 2015, 2016};
-		
-		logger.info("Yearly Reports:");
-		for(int year: years){
-			logger.info("*****************************************");
-			logger.info(new YearlyReportService(year).generateReport(books, 
-					new DefaultBookFormater()));
-		}
+		final Integer [] years = {2012, 2013, 2014, 2015, 2016};		
+		logger.info(new YearlyReportService(years).generateReport(books, 
+				new DefaultBookFormater()));
 		
 		logger.info(new GenreReportService().generateReport(books, 
 				new DefaultBookFormater()));

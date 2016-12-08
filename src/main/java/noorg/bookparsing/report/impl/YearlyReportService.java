@@ -1,7 +1,10 @@
 package noorg.bookparsing.report.impl;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.report.YearlyReport;
@@ -36,12 +39,12 @@ public class YearlyReportService extends AbstractReportService {
 	 * 
 	 * (ex: deltas between counts for each year, mins, maxes, averages, etc)
 	 */
-	private final int reportYear;
+	private final SortedSet<Integer> reportYears;
 	
 
-	public YearlyReportService(final int reportYear) {
+	public YearlyReportService(final Integer... reportYears) {
 		super();
-		this.reportYear = reportYear;
+		this.reportYears = new TreeSet<>(Arrays.asList(reportYears));
 	}
 
 
@@ -49,41 +52,45 @@ public class YearlyReportService extends AbstractReportService {
 	public String generateReport(List<Book> books, BookFormatter formatter) {
 		StringBuilder sb = new StringBuilder();
 		
-		// TODO sort by year? and year end statistics..
+		// TODO year end statistics..
 		
+		sb.append("Yearly Reports:\n");
+		for(Integer reportYear: reportYears){
 		
-		YearlyReport report = new YearlyReport(reportYear);
-		for(Book book: books){
-			
-			boolean bookAdded = false;
-			if(book.getYearsRead().contains(reportYear)){
-				report.addBook(book);
-				bookAdded = true;
-			}
-			
-			// Attempt to determine re-reads.
-			if(bookAdded){
+			YearlyReport report = new YearlyReport(reportYear);
+			for(Book book: books){
 				
-				/* Check if this book has a read date different from report year.
-				 * This will rely on the user shelving data a certain way.
-				 */
-				LocalDate dateRead = book.getDateRead();
-				if(dateRead != null){
-					final int yearRead = dateRead.getYear();
-					if(yearRead != reportYear){
+				boolean bookAdded = false;
+				if(book.getYearsRead().contains(reportYear)){
+					report.addBook(book);
+					bookAdded = true;
+				}
+				
+				// Attempt to determine re-reads.
+				if(bookAdded){
+					
+					/* Check if this book has a read date different from report year.
+					 * This will rely on the user shelving data a certain way.
+					 */
+					LocalDate dateRead = book.getDateRead();
+					if(dateRead != null){
+						final int yearRead = dateRead.getYear();
+						if(yearRead != reportYear){
+							report.addRereadBook(book);
+						}
+					}
+					
+					// Use their readCount (this may be more accurate)
+					final Integer readCount = book.getReadCount();
+					if(readCount != null && readCount> 1){
 						report.addRereadBook(book);
 					}
 				}
-				
-				// Use their readCount (this may be more accurate)
-				final Integer readCount = book.getReadCount();
-				if(readCount != null && readCount> 1){
-					report.addRereadBook(book);
-				}
 			}
+			
+			sb.append("*****************************************\n");
+			sb.append(report.getReport());
 		}
-		
-		sb.append(report.getReport());
 		
 		return sb.toString();
 	}
