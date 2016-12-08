@@ -35,14 +35,14 @@ public interface Report {
 	public boolean addBook(final Book book);
 	
 	/**
-	 * Covert this report to a string using the {@link DefaultBookFormater}
+	 * Convert this report to a string using the {@link DefaultBookFormater}
 	 * 
 	 * @return
 	 */
 	public String getReport();
 	
 	/**
-	 * Covert this report to a string using the given formatter;
+	 * Convert this report to a string using the given formatter;
 	 * 
 	 * @param formatter
 	 * 
