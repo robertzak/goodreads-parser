@@ -3,10 +3,6 @@ package noorg.bookparsing.domain.report;
 import java.util.List;
 import java.util.Map;
 
-import noorg.bookparsing.domain.types.BookFormat;
-import noorg.bookparsing.domain.types.BookGenre;
-import noorg.bookparsing.domain.types.BookType;
-
 /**
  * <p>Copyright 2016 Robert J. Zak
  * 
@@ -23,21 +19,34 @@ import noorg.bookparsing.domain.types.BookType;
  * limitations under the License.
  * 
  * <p>This is shared code for a year-to-year report comparing counts (with percentages)
- * for {@link BookType}s (enums) of interest (ex {@link BookGenre} or {@link BookFormat})
  * 
  * @author Robert J. Zak
  *
  */
-public abstract class AbstractBookTypeYearToYearReport <T extends BookType> extends
+public abstract class AbstractBookCountsYearToYearReport <T> extends
 		AbstractYearToYearReport {
-	
+	private static final int DEFAULT_DATA_WIDTH = 15;
 	private static final String YEAR_TOTAL_FORMAT = "%-8s%-8s";
-	private static final String DATA_FORMAT = "%-15s";
 	private static final String COUNT_PERCENT_FORMAT = "%d (%s%%)";
+	private final String DATA_FORMAT;
 
+	/**
+	 * Generate a year-to-year report using the {@link #DEFAULT_DATA_WIDTH}
+	 * @param reports
+	 */
+	public AbstractBookCountsYearToYearReport(final List<YearlyReport> reports){
+		this(reports, DEFAULT_DATA_WIDTH);
+	}
 	
-	public AbstractBookTypeYearToYearReport(List<YearlyReport> reports) {
+	/**
+	 * Generate a year-to-year report for the given data width
+	 * @param reports
+	 * @param dataWidth
+	 */
+	public AbstractBookCountsYearToYearReport(final List<YearlyReport> reports, final int dataWidth) {
 		super(reports);
+		
+		DATA_FORMAT = "%-" + dataWidth + "s";
 	}
 	
 	/* TODO Add support for excluding keys? The service would need to expose this and pass it 
@@ -49,7 +58,6 @@ public abstract class AbstractBookTypeYearToYearReport <T extends BookType> exte
 	protected String getReportHeaders() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(getReportLabel()).append(":\n\n");
 		sb.append(String.format(YEAR_TOTAL_FORMAT, "Year", "Total"));
 		sb.append(getEnumHeaders()).append("\n");
 		
@@ -57,11 +65,10 @@ public abstract class AbstractBookTypeYearToYearReport <T extends BookType> exte
 	}
 
 	/**
-	 * Each sub-class should compare One Enum type which is used in the Report Headers, 
-	 * and well as 
+	 * Each sub-class must provide the data keys
 	 * @return
 	 */
-	protected abstract T[] getEnumValues();
+	protected abstract T[] getDataKeys();
 	
 	protected abstract Map<T, Integer> getCountMap(final YearlyReport yearlyReport);
 
@@ -72,7 +79,7 @@ public abstract class AbstractBookTypeYearToYearReport <T extends BookType> exte
 	private String getEnumHeaders(){
 		StringBuilder sb = new StringBuilder();
 		
-		final T[] enumsValues = getEnumValues();
+		final T[] enumsValues = getDataKeys();
 		for(T value: enumsValues){
 			sb.append(String.format(DATA_FORMAT, value));
 		}
@@ -84,7 +91,7 @@ public abstract class AbstractBookTypeYearToYearReport <T extends BookType> exte
 	protected String getReportRow(YearlyReport yearlyReport) {
 		StringBuilder sb = new StringBuilder();
 		
-		T[] enumValues = getEnumValues();
+		T[] enumValues = getDataKeys();
 		
 		final String year = Integer.toString(yearlyReport.getYear());
 		final String total = Integer.toString(yearlyReport.getTotal());

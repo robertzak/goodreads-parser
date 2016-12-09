@@ -21,7 +21,7 @@ package noorg.bookparsing.domain.types;
  * @author Robert J. Zak
  *
  */
-public enum BookGenre implements BookType{
+public enum BookGenre{
 	/* TODO what other genres? And NO, Young Adult is NOT a Genre.
 	 * 
 	 * Also, we should avoid sub-genres like Urban Fantasy or 

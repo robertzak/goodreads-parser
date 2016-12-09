@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author Robert J. Zak
  *
  */
-public enum BookFormat implements BookType{
+public enum BookFormat{
 	// I'm squishing these down into fewer formats.
 	AUDIO_BOOK, BOOK, EBOOK, GRAPHIC_NOVEL, UNKNOWN;
 	

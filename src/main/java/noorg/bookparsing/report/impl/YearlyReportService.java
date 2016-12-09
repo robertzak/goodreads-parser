@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.report.BookFormatYearToYearReport;
 import noorg.bookparsing.domain.report.BookGenreYearToYearReport;
+import noorg.bookparsing.domain.report.DecadeYearToYearReport;
 import noorg.bookparsing.domain.report.YearlyReport;
 import noorg.bookparsing.report.format.BookFormatter;
 
@@ -90,7 +91,12 @@ public class YearlyReportService extends AbstractReportService {
 		// Now do some year to year comparison reports
 		sb.append("Year-to-Year Summary:\n\n");		
 		sb.append(new BookGenreYearToYearReport(reports).getReport()).append("\n\n");
-		sb.append(new BookFormatYearToYearReport(reports).getReport());
+		sb.append(new BookFormatYearToYearReport(reports).getReport()).append("\n\n");
+		sb.append(new DecadeYearToYearReport(reports).getReport());
+		
+		// TODO additional reports
+		// 1) compare hours of audio, pages read
+		// 2) compare Gender percentages maybe?
 		
 		return sb.toString();
 	}

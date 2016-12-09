@@ -25,14 +25,14 @@ import noorg.bookparsing.domain.types.BookGenre;
  * @author Robert J. Zak
  *
  */
-public class BookGenreYearToYearReport extends AbstractBookTypeYearToYearReport<BookGenre> {
+public class BookGenreYearToYearReport extends AbstractBookCountsYearToYearReport<BookGenre> {
 
 	public BookGenreYearToYearReport(List<YearlyReport> reports) {
 		super(reports);
 	}
 
 	@Override
-	protected BookGenre[] getEnumValues() {
+	protected BookGenre[] getDataKeys() {
 		return BookGenre.values();
 	}
 

@@ -46,6 +46,8 @@ import noorg.bookparsing.report.format.BookFormatter;
  *
  */
 public class YearlyReport extends AbstractReport{
+	private static final int STARTING_DECADE = 1800;
+	private static final int DECADE = 10;
 	
 	private int year;
 	private Set<Book> rereadBooks = new HashSet<>();
@@ -53,6 +55,7 @@ public class YearlyReport extends AbstractReport{
 	private Map<BookGenre, Integer> countsByGenre = new HashMap<>();
 	private Map<Integer, Integer> countsByRating = new HashMap<>();
 	private Map<Integer, Integer> countsByYearPublished = new HashMap<>();
+	private Map<Integer, Integer> countsByDecadePublished = new HashMap<>();
 	private int totalPages;
 	private int totalPagesGraphicNovels;
 	private int totalHours;
@@ -126,14 +129,27 @@ public class YearlyReport extends AbstractReport{
 		final Integer rating = book.getMyRating();
 		incrementMapValue(countsByRating, rating);
 		
-		final Integer yearPublished = book.getOriginalPublicationYear();
-		
+		// Generate counts by publish year/decade
+		Integer yearPublished = book.getOriginalPublicationYear();
 		if(yearPublished == null){
 			logger.warn("{} is missing its publish year", book);
+			// Use the report year. TODO better default?
+			yearPublished = year;
 		}else if(yearPublished >year){
 			logger.warn("{} was published after report year", book);
 		}
 		incrementMapValue(countsByYearPublished, yearPublished);
+		
+		int decadePublished = STARTING_DECADE;
+		for(;decadePublished<year;decadePublished+=DECADE){
+			if(yearPublished >= decadePublished){
+				if(yearPublished < (decadePublished + DECADE)){
+					logger.debug("Binning {} in {}", yearPublished, decadePublished);
+					break;
+				}
+			}
+		}
+		incrementMapValue(countsByDecadePublished, decadePublished);
 		
 		if(rating != null){
 			totalRating += rating;
@@ -173,6 +189,14 @@ public class YearlyReport extends AbstractReport{
 	}
 
 	/**
+	 * A Set of books that were reread during the year
+	 * @return
+	 */
+	public Set<Book> getRereadBooks() {
+		return rereadBooks;
+	}
+
+	/**
 	 * A map of the counts of the books for each {@link BookFormat}
 	 * @return
 	 */
@@ -205,6 +229,14 @@ public class YearlyReport extends AbstractReport{
 	}
 
 	/**
+	 * A map of counts of the books by the decade they were published
+	 * @return
+	 */
+	public Map<Integer, Integer> getCountsByDecadePublished() {
+		return countsByDecadePublished;
+	}
+
+	/**
 	 * Sum of the page count of all Read books.
 	 * 
 	 * @return
@@ -217,7 +249,7 @@ public class YearlyReport extends AbstractReport{
 	 * Return the sum of the page count for {@link BookFormat#GRAPHIC_NOVEL}
 	 * @return
 	 */
-	public int getTotalPagesGraphicNovel(){
+	public int getTotalPagesGraphicNovels(){
 		return totalPagesGraphicNovels;
 	}
 	
@@ -227,7 +259,7 @@ public class YearlyReport extends AbstractReport{
 	 * @return
 	 */
 	public int getTotalPagesExcludingGraphicNovels(){
-		return getTotalPages() - getTotalPagesGraphicNovel();
+		return getTotalPages() - getTotalPagesGraphicNovels();
 	}
 
 	/**
@@ -263,6 +295,10 @@ public class YearlyReport extends AbstractReport{
 		return getFormatCount(BookFormat.AUDIO_BOOK);
 	}
 	
+	/**
+	 * Returns how many {@link BookFormat#GRAPHIC_NOVEL} were read
+	 * @return
+	 */
 	public int getTotalGraphicNovels(){
 		return getFormatCount(BookFormat.GRAPHIC_NOVEL);
 	}
@@ -349,6 +385,9 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Years Published:\n");
 		sb.append(getCounts(countsByYearPublished)).append("\n");
+		
+		sb.append("Decade Published:\n");
+		sb.append(getCounts(countsByDecadePublished)).append("\n");
 		
 		sb.append("Number of Books: ").append(getTotalBooksRead()).append("\n");
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");

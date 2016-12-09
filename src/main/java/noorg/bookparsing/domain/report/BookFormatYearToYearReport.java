@@ -25,7 +25,7 @@ import noorg.bookparsing.domain.types.BookFormat;
  * @author Robert J. Zak
  *
  */
-public class BookFormatYearToYearReport extends AbstractBookTypeYearToYearReport<BookFormat> {
+public class BookFormatYearToYearReport extends AbstractBookCountsYearToYearReport<BookFormat> {
 
 	public BookFormatYearToYearReport(List<YearlyReport> reports) {
 		super(reports);
@@ -37,7 +37,7 @@ public class BookFormatYearToYearReport extends AbstractBookTypeYearToYearReport
 	}
 
 	@Override
-	protected BookFormat[] getEnumValues() {
+	protected BookFormat[] getDataKeys() {
 		return BookFormat.values();
 	}
 
