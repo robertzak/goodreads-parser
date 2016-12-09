@@ -59,8 +59,7 @@ public class ContributorGenderEnricher extends AbstractBookEnricher {
 		}else if(authorFemale && !authorMale){
 			author.setGender(ContributorGender.FEMALE);
 		}else{
-			// TODO debug
-			logger.info("Not setting Author Gender for {}, authorMale={}, authorFemale={}", 
+			logger.debug("Not setting Author Gender for {}, authorMale={}, authorFemale={}", 
 					book, authorMale, authorFemale);
 		}
 	}

@@ -154,7 +154,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			// enrich the data
 			final BookFormat format = BookFormat.parse(book.getBinding());
 			if(BookFormat.UNKNOWN.equals(format)){
-				logger.warn("{} has unknown format from binding: {}",
+				logger.debug("{} has unknown format from binding: {}",
 						book.getTitle(), book.getBinding());
 			}
 			book.setFormat(format);
@@ -202,6 +202,9 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	 * I'm writing will work for my books, but probably not for everyone.
 	 * 
 	 * I'm open to suggestions on how to do this better.
+	 * 
+	 * TODO move this to it's own Enricher class. It's custom to my shelving
+	 * and shouldn't be in the main parser.
 	 * 
 	 * @param bookshelves
 	 * @return
@@ -253,7 +256,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 		}
 		
 		if(BookGenre.UNKNOWN.equals(genre)){
-			logger.info("Unable to find genre from: {}", bookshelves);
+			logger.debug("Unable to find genre from: {}", bookshelves);
 		}
 		
 		return genre;
@@ -312,6 +315,8 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 	
 	/**
 	 * Special Handling turning the read count into an integer.
+	 * 
+	 * TODO can the be pulled out into an enricher? It doesn't really belong here
 	 * @param readCountStr
 	 * @return
 	 */
@@ -445,7 +450,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 				middleName = nameTokens[1];
 				lastName = nameTokens[2];
 			}else{
-				logger.warn("Special handling of {} contributor tokens for string: {}", 
+				logger.debug("Special handling of {} contributor tokens for string: {}", 
 						nameTokens.length, contStr);
 				/* TODO Can this be made less hacky? For now it kind of 
 				 * works. Some of these authors have extra spaces in the 
@@ -473,7 +478,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 					middleName = foundTokens.get(1);
 					lastName = foundTokens.get(2);
 				}else if(foundTokens.size() > 3){
-					logger.warn("Found {} tokens: {}", foundTokens.size(), 
+					logger.debug("Found {} tokens: {}", foundTokens.size(), 
 							foundTokens);
 					
 					firstName = foundTokens.get(0);
