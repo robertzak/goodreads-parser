@@ -2,6 +2,8 @@ package noorg.bookparsing.domain.report;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * <p>Copyright 2016 Robert J. Zak
@@ -29,6 +31,8 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 	private static final String YEAR_TOTAL_FORMAT = "%-8s%-8s";
 	private static final String COUNT_PERCENT_FORMAT = "%d (%s%%)";
 	private final String DATA_FORMAT;
+	
+	private SortedSet<T> dataKeys = new TreeSet<>();
 
 	/**
 	 * Generate a year-to-year report using the {@link #DEFAULT_DATA_WIDTH}
@@ -47,40 +51,39 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 		super(reports);
 		
 		DATA_FORMAT = "%-" + dataWidth + "s";
+		
+		// Initialize Data Keys
+		for(YearlyReport yearlyReport: reports){
+			Map<T, Integer> dataMap = getDataMap(yearlyReport);
+			dataKeys.addAll(dataMap.keySet());
+		}
 	}
-	
-	/* TODO Add support for excluding keys? The service would need to expose this and pass it 
-	 * down to the report. Maybe instead we evaluate every report and exclude any Enum value 
-	 * that doesn't appear in *any* of the reports?
-	 */
 
 	@Override
 	protected String getReportHeaders() {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(String.format(YEAR_TOTAL_FORMAT, "Year", "Total"));
-		sb.append(getEnumHeaders()).append("\n");
+		sb.append(getDataHeaders()).append("\n");
 		
 		return sb.toString();
 	}
-
-	/**
-	 * Each sub-class must provide the data keys
-	 * @return
-	 */
-	protected abstract T[] getDataKeys();
 	
-	protected abstract Map<T, Integer> getCountMap(final YearlyReport yearlyReport);
-
 	/**
-	 * Helper to generate the Report Headers from the enum values
+	 * Return the appropriate data map for the given yearly report
+	 * @param yearlyReport
 	 * @return
 	 */
-	private String getEnumHeaders(){
+	protected abstract Map<T, Integer> getDataMap(final YearlyReport yearlyReport);
+
+	/**
+	 * Helper to generate the Report Headers from the data keys
+	 * @return
+	 */
+	private String getDataHeaders(){
 		StringBuilder sb = new StringBuilder();
 		
-		final T[] enumsValues = getDataKeys();
-		for(T value: enumsValues){
+		for(T value: dataKeys){
 			sb.append(String.format(DATA_FORMAT, value));
 		}
 		
@@ -91,7 +94,6 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 	protected String getReportRow(YearlyReport yearlyReport) {
 		StringBuilder sb = new StringBuilder();
 		
-		T[] enumValues = getDataKeys();
 		
 		final String year = Integer.toString(yearlyReport.getYear());
 		final String total = Integer.toString(yearlyReport.getTotal());
@@ -99,8 +101,8 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 		// append the report year and total number of books
 		sb.append(String.format(YEAR_TOTAL_FORMAT, year, total));
 		
-		Map<T, Integer> countMap = getCountMap(yearlyReport);
-		for(T key: enumValues){
+		Map<T, Integer> countMap = getDataMap(yearlyReport);
+		for(T key: dataKeys){
 			Integer count = countMap.get(key);
 			if(count == null){
 				count = 0;

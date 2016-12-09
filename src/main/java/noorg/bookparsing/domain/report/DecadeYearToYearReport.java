@@ -2,8 +2,6 @@ package noorg.bookparsing.domain.report;
 
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * <p>Copyright 2014 Robert J. Zak
@@ -26,16 +24,9 @@ import java.util.TreeSet;
  *
  */
 public class DecadeYearToYearReport extends AbstractBookCountsYearToYearReport<Integer> {
-	private SortedSet<Integer> decades = new TreeSet<>();
 
 	public DecadeYearToYearReport(List<YearlyReport> reports) {
 		super(reports);
-		
-		// track all represented decades
-		for(YearlyReport report: reports){
-			Map<Integer, Integer> decadeCounts = report.getCountsByDecadePublished();
-			decades.addAll(decadeCounts.keySet());
-		}
 	}
 
 	@Override
@@ -44,12 +35,7 @@ public class DecadeYearToYearReport extends AbstractBookCountsYearToYearReport<I
 	}
 
 	@Override
-	protected Integer[] getDataKeys() {
-		return decades.toArray(new Integer[decades.size()]);
-	}
-
-	@Override
-	protected Map<Integer, Integer> getCountMap(YearlyReport yearlyReport) {
+	protected Map<Integer, Integer> getDataMap(YearlyReport yearlyReport) {
 		return yearlyReport.getCountsByDecadePublished();
 	}
 }

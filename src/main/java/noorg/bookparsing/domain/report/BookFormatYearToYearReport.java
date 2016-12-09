@@ -37,12 +37,7 @@ public class BookFormatYearToYearReport extends AbstractBookCountsYearToYearRepo
 	}
 
 	@Override
-	protected BookFormat[] getDataKeys() {
-		return BookFormat.values();
-	}
-
-	@Override
-	protected Map<BookFormat, Integer> getCountMap(YearlyReport yearlyReport) {
+	protected Map<BookFormat, Integer> getDataMap(YearlyReport yearlyReport) {
 		return yearlyReport.getCountsByFormat();
 	}
 }

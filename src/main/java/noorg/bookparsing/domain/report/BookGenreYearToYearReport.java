@@ -32,12 +32,7 @@ public class BookGenreYearToYearReport extends AbstractBookCountsYearToYearRepor
 	}
 
 	@Override
-	protected BookGenre[] getDataKeys() {
-		return BookGenre.values();
-	}
-
-	@Override
-	protected Map<BookGenre, Integer> getCountMap(YearlyReport yearlyReport) {
+	protected Map<BookGenre, Integer> getDataMap(YearlyReport yearlyReport) {
 		return yearlyReport.getCountsByGenre();
 	}
 
