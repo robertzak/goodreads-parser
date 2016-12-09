@@ -126,7 +126,13 @@ public class YearlyReport extends AbstractReport{
 		final Integer rating = book.getMyRating();
 		incrementMapValue(countsByRating, rating);
 		
-		final Integer yearPublished = book.getYearOfPublication();
+		final Integer yearPublished = book.getOriginalPublicationYear();
+		
+		if(yearPublished == null){
+			logger.warn("{} is missing its publish year", book);
+		}else if(yearPublished >year){
+			logger.warn("{} was published after report year", book);
+		}
 		incrementMapValue(countsByYearPublished, yearPublished);
 		
 		if(rating != null){
