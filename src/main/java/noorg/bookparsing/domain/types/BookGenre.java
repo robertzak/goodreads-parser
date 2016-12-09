@@ -2,7 +2,7 @@ package noorg.bookparsing.domain.types;
 
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ package noorg.bookparsing.domain.types;
  * @author Robert J. Zak
  *
  */
-public enum BookGenre {
-	/* TODO what other genres? An NO, Young Adult is NOT a Genre.
+public enum BookGenre implements BookType{
+	/* TODO what other genres? And NO, Young Adult is NOT a Genre.
 	 * 
 	 * Also, we should avoid sub-genres like Urban Fantasy or 
 	 * Paranormal Romance in my opinion..

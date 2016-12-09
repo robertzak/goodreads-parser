@@ -192,8 +192,10 @@ public abstract class AbstractReport implements Report{
 	 * 
 	 * @param count
 	 * @return
+	 * 
+	 * TODO should this be public, or moved elsewhere (with total as second param)?
 	 */
-	private String getPercentAsString(final Integer count){
+	public String getPercentAsString(final Integer count){
 		double percent = 0.0;
 		
 		if(count != null){

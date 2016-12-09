@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2014-2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author Robert J. Zak
  *
  */
-public enum BookFormat {
+public enum BookFormat implements BookType{
 	// I'm squishing these down into fewer formats.
 	AUDIO_BOOK, BOOK, EBOOK, GRAPHIC_NOVEL, UNKNOWN;
 	

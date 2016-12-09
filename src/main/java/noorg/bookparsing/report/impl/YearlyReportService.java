@@ -1,12 +1,15 @@
 package noorg.bookparsing.report.impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.domain.report.BookFormatYearToYearReport;
+import noorg.bookparsing.domain.report.BookGenreYearToYearReport;
 import noorg.bookparsing.domain.report.YearlyReport;
 import noorg.bookparsing.report.format.BookFormatter;
 
@@ -26,33 +29,24 @@ import noorg.bookparsing.report.format.BookFormatter;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * <p>This service will evaluate the list of Books and generate a year by year
- * report.
+ * <p>This service will evaluate the list of Books and generate a report for
+ * each year specified as well as comparing some of the statistics between years.
  * 
  * @author Robert J. Zak
  * 
  */
 public class YearlyReportService extends AbstractReportService {
-	/* TODO change to support set of years
-	 * Generate a YearlyReport for each year, then generate
-	 * statistics comparing those years 
-	 * 
-	 * (ex: deltas between counts for each year, mins, maxes, averages, etc)
-	 */
 	private final SortedSet<Integer> reportYears;
-	
 
 	public YearlyReportService(final Integer... reportYears) {
 		super();
 		this.reportYears = new TreeSet<>(Arrays.asList(reportYears));
 	}
 
-
 	@Override
 	public String generateReport(List<Book> books, BookFormatter formatter) {
-		StringBuilder sb = new StringBuilder();
-		
-		// TODO year end statistics..
+		StringBuilder sb = new StringBuilder();		
+		List<YearlyReport> reports = new ArrayList<>();
 		
 		sb.append("Yearly Reports:\n");
 		for(Integer reportYear: reportYears){
@@ -87,12 +81,17 @@ public class YearlyReportService extends AbstractReportService {
 					}
 				}
 			}
-			
+
+			reports.add(report);
 			sb.append("*****************************************\n");
 			sb.append(report.getReport());
 		}
 		
+		// Now do some year to year comparison reports
+		sb.append("Year-to-Year Summary:\n\n");		
+		sb.append(new BookGenreYearToYearReport(reports).getReport()).append("\n\n");
+		sb.append(new BookFormatYearToYearReport(reports).getReport());
+		
 		return sb.toString();
 	}
-
 }
