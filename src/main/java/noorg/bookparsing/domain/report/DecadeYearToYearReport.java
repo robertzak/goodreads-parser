@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>Copyright 2014 Robert J. Zak
+ * <p>Copyright 2016 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import java.util.Map;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * <p>This interface is meant to simplify the types of reports, hopefully.
+ * <p>Compare how many books were read from each decade every year
  * 
  * @author Robert J. Zak
  *
