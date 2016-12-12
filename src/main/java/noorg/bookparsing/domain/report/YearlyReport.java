@@ -60,6 +60,8 @@ public class YearlyReport extends AbstractReport{
 	private int totalPagesGraphicNovels;
 	private int totalHours;
 	private long totalRating;
+	private int maxPages;
+	private int maxHours;
 	
 	public YearlyReport(final int year){
 		this.year = year;
@@ -93,11 +95,13 @@ public class YearlyReport extends AbstractReport{
 				switch(format){
 				case AUDIO_BOOK:
 					totalHours += pageCount;
+					maxHours = Math.max(maxHours, pageCount);
 					break;
 				case BOOK:
 				case EBOOK:
 				case GRAPHIC_NOVEL:
 					totalPages += pageCount;
+					maxPages = Math.max(maxPages, pageCount);
 					break;
 				case UNKNOWN:
 				default:
@@ -331,10 +335,19 @@ public class YearlyReport extends AbstractReport{
 		return getTotalBooksRead() - getTotalGraphicNovels();
 	}
 	
+	/**
+	 * Get the average rating of all books read/rated for the year
+	 * @return
+	 */
 	public double getAverageRating(){
 		return getAverage(totalRating, getTotal());
 	}
 	
+	/**
+	 * Get the average number of pages read for the year
+	 * including {@link BookFormat#GRAPHIC_NOVEL}
+	 * @return
+	 */
 	public double getAveragePages(){
 		return getAverage(totalPages, getTotalBooksRead());
 	}
@@ -349,6 +362,10 @@ public class YearlyReport extends AbstractReport{
 		return getAverage(count, getTotalBooksReadExcludingGraphicNovels());
 	}
 	
+	/**
+	 * Get the Average Number of Hours of Audio listened to
+	 * @return
+	 */
 	public double getAveragesHours(){
 		return getAverage(totalHours, getTotalAudioBooks());
 	}
@@ -363,6 +380,24 @@ public class YearlyReport extends AbstractReport{
 		double totalDbl = new Long(count).doubleValue();
 		
 		return totalDbl/total;
+	}
+
+	/**
+	 * Get the number of pages of the largest book read for the year
+	 * 
+	 * @return
+	 */
+	public int getMaxPages() {
+		return maxPages;
+	}
+
+	/**
+	 * Get the number of hours for the longest audio book listened to for the year.
+	 * 
+	 * @return
+	 */
+	public int getMaxHours() {
+		return maxHours;
 	}
 
 	@Override
@@ -391,6 +426,7 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Number of Books: ").append(getTotalBooksRead()).append("\n");
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");
+		sb.append("Longest Book (Pages): ").append(getMaxPages()).append("\n");
 		sb.append("Average Pages: ");
 		sb.append(getDoubleAsFixedDecimal(getAveragePages())).append("\n\n");
 		
@@ -401,6 +437,7 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Number of Audiobooks: ").append(getTotalAudioBooks()).append("\n");
 		sb.append("Total Audio Hours: ").append(getTotalHours()).append("\n");
+		sb.append("Longest Book (Hours): ").append(getMaxHours()).append("\n");
 		sb.append("Average Hours: ");
 		sb.append(getDoubleAsFixedDecimal(getAveragesHours())).append("\n\n");
 		

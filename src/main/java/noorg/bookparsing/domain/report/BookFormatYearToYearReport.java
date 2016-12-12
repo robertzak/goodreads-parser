@@ -40,4 +40,9 @@ public class BookFormatYearToYearReport extends AbstractBookCountsYearToYearRepo
 	protected Map<BookFormat, Integer> getDataMap(YearlyReport yearlyReport) {
 		return yearlyReport.getCountsByFormat();
 	}
+
+	@Override
+	protected int getDividerLength() {
+		return 75;
+	}
 }

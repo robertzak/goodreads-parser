@@ -40,4 +40,9 @@ public class BookGenreYearToYearReport extends AbstractBookCountsYearToYearRepor
 	protected String getReportLabel() {
 		return "Genre Counts";
 	}
+
+	@Override
+	protected int getDividerLength() {
+		return 160;
+	}
 }

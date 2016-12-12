@@ -32,6 +32,8 @@ import java.util.List;
  *
  */
 public abstract class AbstractYearToYearReport{
+	private static final String DIVIDER = "-";
+	
 	private final List<YearlyReport> reports;
 	
 	public AbstractYearToYearReport(List<YearlyReport> reports) {
@@ -50,9 +52,24 @@ public abstract class AbstractYearToYearReport{
 		
 		sb.append(getReportLabel()).append(":\n\n");
 		sb.append(getReportHeaders()).append("\n");
+		sb.append(getDivider()).append("\n");
 		
 		for(YearlyReport yearlyReport: reports){
-			sb.append(getReportRow(yearlyReport));
+			sb.append(getReportRow(yearlyReport)).append("\n");
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
+	 * Helper to generate a dividing line between the headers and the data
+	 * @return
+	 */
+	protected String getDivider(){
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i=0; i<getDividerLength(); i++){
+			sb.append(DIVIDER);
 		}
 		
 		return sb.toString();
@@ -76,4 +93,12 @@ public abstract class AbstractYearToYearReport{
 	 * @return
 	 */
 	protected abstract String getReportRow(final YearlyReport yearlyReport);
+	
+	/**
+	 * Each concrete report should specify how wide to make the dividing line
+	 * based on how wide the report data is.
+	 *  
+	 * @return
+	 */
+	protected abstract int getDividerLength();
 }

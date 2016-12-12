@@ -64,7 +64,7 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(String.format(YEAR_TOTAL_FORMAT, "Year", "Total"));
-		sb.append(getDataHeaders()).append("\n");
+		sb.append(getDataHeaders());
 		
 		return sb.toString();
 	}
@@ -113,7 +113,6 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 			
 			sb.append(String.format(DATA_FORMAT, line));
 		}
-		sb.append("\n");
 		
 		return sb.toString();
 	}

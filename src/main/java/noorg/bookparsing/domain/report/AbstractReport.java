@@ -214,7 +214,7 @@ public abstract class AbstractReport implements Report{
 	 * @param value
 	 * @return
 	 */
-	protected String getDoubleAsFixedDecimal(final double value){
+	public static String getDoubleAsFixedDecimal(final double value){
 		return DECIMAL_FORMAT.format(value);
 	}
 }

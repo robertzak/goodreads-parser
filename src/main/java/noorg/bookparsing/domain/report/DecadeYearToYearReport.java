@@ -38,4 +38,9 @@ public class DecadeYearToYearReport extends AbstractBookCountsYearToYearReport<I
 	protected Map<Integer, Integer> getDataMap(YearlyReport yearlyReport) {
 		return yearlyReport.getCountsByDecadePublished();
 	}
+
+	@Override
+	protected int getDividerLength() {
+		return 175;
+	}
 }
