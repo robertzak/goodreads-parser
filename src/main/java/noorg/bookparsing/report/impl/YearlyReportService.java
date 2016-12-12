@@ -12,6 +12,7 @@ import noorg.bookparsing.domain.report.BookFormatYearToYearReport;
 import noorg.bookparsing.domain.report.BookGenreYearToYearReport;
 import noorg.bookparsing.domain.report.BookRatingsYearToYearReport;
 import noorg.bookparsing.domain.report.DecadeYearToYearReport;
+import noorg.bookparsing.domain.report.GenderYearToYearReport;
 import noorg.bookparsing.domain.report.ReadingQuantityYearToYearReport;
 import noorg.bookparsing.domain.report.YearlyReport;
 import noorg.bookparsing.report.format.BookFormatter;
@@ -95,11 +96,9 @@ public class YearlyReportService extends AbstractReportService {
 		sb.append(new BookGenreYearToYearReport(reports).getReport()).append("\n\n");
 		sb.append(new BookRatingsYearToYearReport(reports).getReport()).append("\n\n");
 		sb.append(new DecadeYearToYearReport(reports).getReport()).append("\n\n");
+		sb.append(new GenderYearToYearReport(reports).getReport()).append("\n\n");
 		sb.append(new BookFormatYearToYearReport(reports).getReport()).append("\n\n");
 		sb.append(new ReadingQuantityYearToYearReport(reports).getReport());
-		
-		// TODO additional reports
-		// 1) compare Gender percentages maybe?
 		
 		return sb.toString();
 	}

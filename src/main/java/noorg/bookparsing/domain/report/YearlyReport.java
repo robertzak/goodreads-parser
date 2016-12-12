@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.domain.Contributor;
 import noorg.bookparsing.domain.types.BookFormat;
 import noorg.bookparsing.domain.types.BookGenre;
+import noorg.bookparsing.domain.types.ContributorGender;
 import noorg.bookparsing.report.format.BookFormatter;
 
 
@@ -53,6 +55,7 @@ public class YearlyReport extends AbstractReport{
 	private Set<Book> rereadBooks = new HashSet<>();
 	private Map<BookFormat, Integer> countsByFormat = new HashMap<>();
 	private Map<BookGenre, Integer> countsByGenre = new HashMap<>();
+	private Map<ContributorGender, Integer> countsByAuthorGender = new HashMap<>();
 	private Map<Integer, Integer> countsByRating = new HashMap<>();
 	private Map<Integer, Integer> countsByYearPublished = new HashMap<>();
 	private Map<Integer, Integer> countsByDecadePublished = new HashMap<>();
@@ -155,6 +158,11 @@ public class YearlyReport extends AbstractReport{
 		}
 		incrementMapValue(countsByDecadePublished, decadePublished);
 		
+		Contributor author = book.getAuthor();
+		if(author != null){
+			incrementMapValue(countsByAuthorGender, author.getGender());
+		}
+		
 		if(rating != null){
 			totalRating += rating;
 		}
@@ -214,6 +222,16 @@ public class YearlyReport extends AbstractReport{
 	 */
 	public Map<BookGenre, Integer> getCountsByGenre() {
 		return countsByGenre;
+	}
+
+	/**
+	 * A map of the counts of the books by the {@link ContributorGender} of
+	 * the author
+	 * 
+	 * @return
+	 */
+	public Map<ContributorGender, Integer> getCountsByAuthorGender() {
+		return countsByAuthorGender;
 	}
 
 	/**
@@ -413,6 +431,9 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("*******************\n* Genre Breakdown *\n*******************\n");
 		sb.append(getCounts(countsByGenre)).append("\n");
+		
+		sb.append("*******************\n* Author Gender Breakdown *\n*******************\n");
+		sb.append(getCounts(countsByAuthorGender)).append("\n");
 		
 		sb.append("Average Rating: ");
 		sb.append(getDoubleAsFixedDecimal(getAverageRating())).append("\n");
