@@ -432,7 +432,7 @@ public class YearlyReport extends AbstractReport{
 		sb.append("*******************\n* Genre Breakdown *\n*******************\n");
 		sb.append(getCounts(countsByGenre)).append("\n");
 		
-		sb.append("*******************\n* Author Gender Breakdown *\n*******************\n");
+		sb.append("***************************\n* Author Gender Breakdown *\n***************************\n");
 		sb.append(getCounts(countsByAuthorGender)).append("\n");
 		
 		sb.append("Average Rating: ");
