@@ -54,13 +54,15 @@ public class ContributorGenderEnricher extends AbstractBookEnricher {
 		
 		// Ensure only 1 gender was found
 		Contributor author = book.getAuthor();
-		if(authorMale && !authorFemale){
+		if(authorMale && !authorFemale){ // only male
 			author.setGender(ContributorGender.MALE);
-		}else if(authorFemale && !authorMale){
+		}else if(authorFemale && !authorMale){ // only female
 			author.setGender(ContributorGender.FEMALE);
-		}else{
-			logger.debug("Not setting Author Gender for {}, authorMale={}, authorFemale={}", 
+		}else if (!authorMale && !authorFemale){ // no gender shelf at all
+			if(book.getReadCount() > 0) {
+				logger.info("Not setting Author Gender for {}, authorMale={}, authorFemale={}", 
 					book, authorMale, authorFemale);
+			}
 		}
 	}
 
