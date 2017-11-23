@@ -158,9 +158,12 @@ public class YearlyReport extends AbstractReport{
 		}
 		incrementMapValue(countsByDecadePublished, decadePublished);
 		
-		Contributor author = book.getAuthor();
+		final Contributor author = book.getAuthor();
 		if(author != null){
-			incrementMapValue(countsByAuthorGender, author.getGender());
+			final ContributorGender gender = author.getGender();
+			if(gender != null) {
+				incrementMapValue(countsByAuthorGender, author.getGender());
+			}
 		}
 		
 		if(rating != null){
@@ -395,7 +398,7 @@ public class YearlyReport extends AbstractReport{
 	 * @return
 	 */
 	private double getAverage(final long count, final long total){
-		double totalDbl = new Long(count).doubleValue();
+		final double totalDbl = Long.valueOf(count).doubleValue();
 		
 		return totalDbl/total;
 	}
