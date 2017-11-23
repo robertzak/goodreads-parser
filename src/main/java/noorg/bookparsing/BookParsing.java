@@ -7,18 +7,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.enrich.ContributorGenderEnricher;
 import noorg.bookparsing.enrich.GraphicNovelEnricher;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
-import noorg.bookparsing.report.impl.GenderReportService;
-import noorg.bookparsing.report.impl.GenreReportService;
 import noorg.bookparsing.report.impl.YearlyReportService;
 import noorg.bookparsing.service.ParsingService;
 import noorg.bookparsing.service.impl.GoodReadsParsingService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>Copyright 2014-2016 Robert J. Zak
@@ -81,14 +79,8 @@ public class BookParsing {
 		new ContributorGenderEnricher().enrichBooks(books);
 		
 		// run reports
-		final Integer [] years = {2012, 2013, 2014, 2015, 2016};		
+		final Integer [] years = {2012, 2013, 2014, 2015, 2016, 2017};		
 		logger.info(new YearlyReportService(years).generateReport(books, 
-				new DefaultBookFormater()));
-		
-		logger.info(new GenreReportService().generateReport(books, 
-				new DefaultBookFormater()));
-		
-		logger.info(new GenderReportService().generateReport(books, 
 				new DefaultBookFormater()));
 	}
 }
