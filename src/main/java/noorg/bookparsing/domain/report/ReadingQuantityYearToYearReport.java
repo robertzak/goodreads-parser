@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class ReadingQuantityYearToYearReport extends AbstractYearToYearReport {
 	private static final int DATA_WIDTH  = 15;
-	private static final int NUM_COLUMNS  = 8;
+	private static final int NUM_COLUMNS  = 9;
 	private final String format;
 	
 
@@ -52,7 +52,7 @@ public class ReadingQuantityYearToYearReport extends AbstractYearToYearReport {
 		return String.format(format,
 				"Year", "Total Pages", "Total (no GN)", "Avg Pages",
 				"Avg (No GN)", "Max Pages", "Total Hours", "Avg Hours",
-				"Max Hours");
+				"Max Hours", "Num Rereads");
 	}
 
 	@Override
@@ -66,11 +66,12 @@ public class ReadingQuantityYearToYearReport extends AbstractYearToYearReport {
 				yearlyReport.getMaxPages(),
 				yearlyReport.getTotalHours(),
 				AbstractReport.getDoubleAsFixedDecimal(yearlyReport.getAveragesHours()),
-				yearlyReport.getMaxHours());		
+				yearlyReport.getMaxHours(),
+				yearlyReport.getRereadCount());		
 	}
 
 	@Override
 	protected int getDividerLength() {
-		return 125;
+		return 140;
 	}
 }
