@@ -63,8 +63,10 @@ public class YearlyReport extends AbstractReport{
 	private int totalPagesGraphicNovels;
 	private int totalHours;
 	private long totalRating;
-	private int maxPages;
-	private int maxHours;
+	private Book longestBook;
+	private Book longestAudioBook;
+	private Book shortestBook;
+	private Book shortestAudioBook;
 	
 	public YearlyReport(final int year){
 		this.year = year;
@@ -98,13 +100,32 @@ public class YearlyReport extends AbstractReport{
 				switch(format){
 				case AUDIO_BOOK:
 					totalHours += pageCount;
-					maxHours = Math.max(maxHours, pageCount);
+					
+					// compare lengths 
+					if(isLonger(book, longestAudioBook)) {
+						longestAudioBook = book;
+					}
+					
+					if(isShorter(book, shortestAudioBook)) {
+						shortestAudioBook = book;
+					}
+					
 					break;
 				case BOOK:
 				case EBOOK:
 				case GRAPHIC_NOVEL:
 					totalPages += pageCount;
-					maxPages = Math.max(maxPages, pageCount);
+					
+					// compare lengths 
+					if(isLonger(book, longestBook)) {
+						longestBook = book;
+					}
+					
+					if(isShorter(book, shortestBook)) {
+						shortestBook = book;
+					}
+					
+					
 					break;
 				case UNKNOWN:
 				default:
@@ -409,7 +430,7 @@ public class YearlyReport extends AbstractReport{
 	 * @return
 	 */
 	public int getMaxPages() {
-		return maxPages;
+		return getBookLength(longestBook);
 	}
 
 	/**
@@ -418,7 +439,84 @@ public class YearlyReport extends AbstractReport{
 	 * @return
 	 */
 	public int getMaxHours() {
-		return maxHours;
+		return getBookLength(longestAudioBook);
+	}
+	
+	/**
+	 * Helper to compare if book1 is longer than book 2, if one of them is null the non-null
+	 * book will be considered longer.
+	 * 
+	 * @param book1
+	 * @param book2
+	 * @return
+	 */
+	private boolean isLonger(final Book book1, final Book book2) {
+		return getBookLength(book1) > getBookLength(book2);
+	}
+	
+	/**
+	 * Helper to compare if book1 is shorter than book 2, if one of them is null the non-null
+	 * book will be considered shorter.
+	 * 
+	 * @param book1
+	 * @param book2
+	 * @return
+	 */
+	private boolean isShorter(final Book book1, final Book book2) {
+		boolean shorter = false;
+		
+		
+		//logger.info("Comparing {} ({}) to {} ({})", book1, getBookLength(book1), book2, getBookLength(book2));
+		if(book1 != null) {
+			//logger.info("Book1 not null!");
+			if(book2 != null) {
+				//logger.info("Book2 not null!");
+				shorter = getBookLength(book1) < getBookLength(book2);
+			}else {
+				shorter = true;
+			}
+		}
+		
+		return shorter;
+	}
+	
+	/**
+	 * Null safe helper to get the book length
+	 * @param book
+	 * @return
+	 */
+	private int getBookLength(final Book book) {
+		int length = 0;
+		
+		if (book != null) {
+			length = book.getNumberOfPages();
+		}
+		
+		return length;
+	}
+	
+	/**
+	 * Helper to print the Book and it's length
+	 * @param book
+	 * @return
+	 */
+	public String printBookLength(final Book book, final boolean audio) {
+		final StringBuilder sb = new StringBuilder();
+		
+		if(book != null) {
+			sb.append(book.getTitle());
+			sb.append(" by ").append(book.getAuthor());
+			sb.append(" - ").append(book.getNumberOfPages());
+			if(audio) {
+				sb.append(" hours");
+			}else {
+				sb.append(" pages");
+			}
+		}else {
+			sb.append("None");
+		}
+		
+		return sb.toString();
 	}
 
 	@Override
@@ -450,7 +548,8 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Number of Books: ").append(getTotalBooksRead()).append("\n");
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");
-		sb.append("Longest Book (Pages): ").append(getMaxPages()).append("\n");
+		sb.append("Longest Book: ").append(printBookLength(longestBook, false)).append("\n");
+		sb.append("Shortest Book: ").append(printBookLength(shortestBook, false)).append("\n");
 		sb.append("Average Pages: ");
 		sb.append(getDoubleAsFixedDecimal(getAveragePages())).append("\n\n");
 		
@@ -461,7 +560,8 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Number of Audiobooks: ").append(getTotalAudioBooks()).append("\n");
 		sb.append("Total Audio Hours: ").append(getTotalHours()).append("\n");
-		sb.append("Longest Book (Hours): ").append(getMaxHours()).append("\n");
+		sb.append("Longest Book: ").append(printBookLength(longestAudioBook, true)).append("\n");
+		sb.append("Shortest Book: ").append(printBookLength(shortestAudioBook, true)).append("\n");
 		sb.append("Average Hours: ");
 		sb.append(getDoubleAsFixedDecimal(getAveragesHours())).append("\n\n");
 		
