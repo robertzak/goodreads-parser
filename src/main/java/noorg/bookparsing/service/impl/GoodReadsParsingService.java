@@ -174,8 +174,9 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			 */
 			if(BookFormat.AUDIO_BOOK.equals(book.getFormat())){
 				final Integer duration = book.getNumberOfPages();
-				if((duration!= null) && (duration > 50)){
-					// 50 hours is extremely long for an audio book warn about it.
+				if((duration!= null) && (duration > 60)){
+					// 60 hours is extremely long for an audio book warn about it. 
+					// Shogun proved 50 hours is feasible 
 					logger.warn("{} has duration of {} hours", book.getTitle(), duration);
 				}
 			}
