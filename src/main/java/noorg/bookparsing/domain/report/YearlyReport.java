@@ -113,7 +113,6 @@ public class YearlyReport extends AbstractReport{
 					break;
 				case BOOK:
 				case EBOOK:
-				case GRAPHIC_NOVEL:
 					totalPages += pageCount;
 					
 					// compare lengths 
@@ -126,6 +125,9 @@ public class YearlyReport extends AbstractReport{
 					}
 					
 					
+					break;
+				case GRAPHIC_NOVEL:
+					totalPages += pageCount;
 					break;
 				case UNKNOWN:
 				default:
@@ -159,10 +161,15 @@ public class YearlyReport extends AbstractReport{
 		
 		// Generate counts by publish year/decade
 		Integer yearPublished = book.getOriginalPublicationYear();
-		if(yearPublished == null){
-			logger.warn("{} is missing its publish year", book);
-			// Use the report year. TODO better default?
-			yearPublished = year;
+		if(yearPublished == null){			
+			// Check for Edition publication year
+			yearPublished = book.getYearOfPublication();
+			if(yearPublished == null) {
+				logger.warn("{} is both its original and edition publication years", book);
+				
+				// Use the report year. TODO better default?
+				yearPublished = year;
+			}
 		}else if(yearPublished >year){
 			logger.warn("{} was published after report year", book);
 		}
@@ -536,6 +543,7 @@ public class YearlyReport extends AbstractReport{
 		sb.append("***************************\n* Author Gender Breakdown *\n***************************\n");
 		sb.append(getCounts(countsByAuthorGender)).append("\n");
 		
+		sb.append("***********\n* Ratings *\n***********\n");
 		sb.append("Average Rating: ");
 		sb.append(getDoubleAsFixedDecimal(getAverageRating())).append("\n");
 		sb.append(getCounts(countsByRating)).append("\n");
