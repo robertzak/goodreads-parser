@@ -74,6 +74,7 @@ public class Book {
 	private BookFormat format;
 	private BookGenre genre;
 	private Set<Integer> yearsRead = new HashSet<>();
+	private boolean fromBacklog = false;
 
 	public String getId() {
 		return id;
@@ -351,6 +352,14 @@ public class Book {
 		this.genre = genre;
 	}
 
+	public boolean isFromBacklog() {
+		return fromBacklog;
+	}
+
+	public void setFromBacklog(boolean fromBacklog) {
+		this.fromBacklog = fromBacklog;
+	}
+
 	/**
 	 * Dumps the whole object as a string
 	 * @return
@@ -378,6 +387,7 @@ public class Book {
 		sb.append(", bookshelvesWithPositions=").append(bookshelvesWithPositions);
 		sb.append(", exclusiveShelf=").append(exclusiveShelf);
 		sb.append(", readState=").append(readState);
+		sb.append(", fromBacklog=").append(fromBacklog);
 		sb.append(", myReview=").append(myReview);
 		sb.append(", spoiler=").append(spoiler);
 		sb.append(", privateNotes=").append(privateNotes);

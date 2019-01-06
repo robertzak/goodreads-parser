@@ -33,6 +33,8 @@ import java.util.List;
  */
 public abstract class AbstractYearToYearReport{
 	private static final String DIVIDER = "-";
+	protected static final String YEAR_TOTAL_FORMAT = "%-8s%-8s";
+	protected static final String COUNT_PERCENT_FORMAT = "%d (%s%%)";
 	
 	private final List<YearlyReport> reports;
 	
@@ -76,6 +78,19 @@ public abstract class AbstractYearToYearReport{
 	}
 	
 	/**
+	 * Get the formatted string for the provided count and the 
+	 * percentage of the total read for the given yearly report
+	 * 
+	 * @param yearlyReport
+	 * @param count
+	 * @return
+	 */
+	protected String getCountPercent(final YearlyReport yearlyReport, final int count) {
+		final String percent = yearlyReport.getPercentAsString(count);
+		return String.format(COUNT_PERCENT_FORMAT, count, percent);
+	}
+	
+	/**
 	 * A label for the report type
 	 * @return
 	 */
@@ -97,7 +112,7 @@ public abstract class AbstractYearToYearReport{
 	/**
 	 * Each concrete report should specify how wide to make the dividing line
 	 * based on how wide the report data is.
-	 *  
+	 *
 	 * @return
 	 */
 	protected abstract int getDividerLength();

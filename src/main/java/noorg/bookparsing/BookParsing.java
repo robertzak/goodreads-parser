@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.enrich.AbstractBookEnricher;
+import noorg.bookparsing.enrich.BacklogBookEnricher;
 import noorg.bookparsing.enrich.ContributorGenderEnricher;
 import noorg.bookparsing.enrich.GraphicNovelEnricher;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
@@ -75,8 +77,15 @@ public class BookParsing {
 		}
 		
 		// do some data enrichment
-		new GraphicNovelEnricher().enrichBooks(books);
-		new ContributorGenderEnricher().enrichBooks(books);
+		AbstractBookEnricher [] enrichers = {
+				new GraphicNovelEnricher(),
+				new ContributorGenderEnricher(),
+				new BacklogBookEnricher()
+		};
+		
+		for(AbstractBookEnricher e: enrichers) {
+			e.enrichBooks(books);
+		}
 		
 		// run reports
 		final Integer [] years = {2012, 2013, 2014, 2015, 2016, 2017, 2018};		

@@ -28,8 +28,6 @@ import java.util.TreeSet;
 public abstract class AbstractBookCountsYearToYearReport <T> extends
 		AbstractYearToYearReport {
 	private static final int DEFAULT_DATA_WIDTH = 15;
-	private static final String YEAR_TOTAL_FORMAT = "%-8s%-8s";
-	private static final String COUNT_PERCENT_FORMAT = "%d (%s%%)";
 	private final String DATA_FORMAT;
 	
 	private SortedSet<T> dataKeys = new TreeSet<>();
@@ -103,15 +101,8 @@ public abstract class AbstractBookCountsYearToYearReport <T> extends
 		
 		Map<T, Integer> countMap = getDataMap(yearlyReport);
 		for(T key: dataKeys){
-			Integer count = countMap.get(key);
-			if(count == null){
-				count = 0;
-			}
-			
-			final String percent = yearlyReport.getPercentAsString(count);
-			String line = String.format(COUNT_PERCENT_FORMAT, count, percent);
-			
-			sb.append(String.format(DATA_FORMAT, line));
+			Integer count = yearlyReport.getMapCount(countMap, key);
+			sb.append(String.format(DATA_FORMAT, getCountPercent(yearlyReport, count)));
 		}
 		
 		return sb.toString();

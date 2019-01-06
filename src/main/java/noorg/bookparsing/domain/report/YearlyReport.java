@@ -53,7 +53,9 @@ public class YearlyReport extends AbstractReport{
 	
 	private int year;
 	private Set<Book> rereadBooks = new HashSet<>();
+	private Set<Book> backlogBooks = new HashSet<>();
 	private Map<BookFormat, Integer> countsByFormat = new HashMap<>();
+	private Map<BookFormat, Integer> backlogCountsByFormat = new HashMap<>();
 	private Map<BookGenre, Integer> countsByGenre = new HashMap<>();
 	private Map<ContributorGender, Integer> countsByAuthorGender = new HashMap<>();
 	private Map<Integer, Integer> countsByRating = new HashMap<>();
@@ -197,6 +199,11 @@ public class YearlyReport extends AbstractReport{
 		if(rating != null){
 			totalRating += rating;
 		}
+		
+		if(book.isFromBacklog()) {
+			backlogBooks.add(book);
+			incrementMapValue(backlogCountsByFormat, book.getFormat());
+		}
 	}
 	
 	@Override
@@ -332,6 +339,23 @@ public class YearlyReport extends AbstractReport{
 	}
 	
 	/**
+	 * Returns the number of Books from the backlog read for the year
+	 * @return
+	 */
+	public int getTotalBacklogRead() {
+		return backlogBooks.size();
+	}
+	
+	/**
+	 * Returns the number of non {@link BookFormat#AUDIO_BOOK} books were read for the year
+	 * 
+	 * @return
+	 */
+	public int getTotalBacklogBooksRead() {
+		return getTotalBacklogRead() - getTotalBacklogAudioBooks();
+	}
+
+	/**
 	 * How many books reread this year
 	 * NOTE: This is VERY data dependent and therefore may not be accurate
 	 * @return
@@ -345,7 +369,16 @@ public class YearlyReport extends AbstractReport{
 	 * @return
 	 */
 	public int getTotalAudioBooks(){
-		return getFormatCount(BookFormat.AUDIO_BOOK);
+		return getMapCount(countsByFormat, BookFormat.AUDIO_BOOK);
+	}
+	
+	/**
+	 * Returns how many books from the backlog were {@link BookFormat#AUDIO_BOOK}
+	 * 
+	 * @return
+	 */
+	public int getTotalBacklogAudioBooks() {
+		return getMapCount(backlogCountsByFormat, BookFormat.AUDIO_BOOK);
 	}
 	
 	/**
@@ -353,18 +386,7 @@ public class YearlyReport extends AbstractReport{
 	 * @return
 	 */
 	public int getTotalGraphicNovels(){
-		return getFormatCount(BookFormat.GRAPHIC_NOVEL);
-	}
-	
-	private int getFormatCount(final BookFormat format){
-		int total = 0;
-		
-		final Integer abCount = countsByFormat.get(format);
-		if(abCount != null){
-			total = abCount;
-		}
-		
-		return total;
+		return getMapCount(countsByFormat, BookFormat.GRAPHIC_NOVEL);
 	}
 	
 	/**
@@ -532,6 +554,7 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Year: ").append(year).append("\n");
 		sb.append("Total Books: ").append(getTotal()).append("\n");
+		sb.append("Total Backlog Books: ").append(getTotalBacklogRead()).append("\n");
 		sb.append("Rereads: ").append(getRereadCount()).append("\n\n");
 		
 		sb.append("********************\n* Format Breakdown *\n********************\n");
@@ -556,6 +579,7 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Number of Books: ").append(getTotalBooksRead()).append("\n");
 		sb.append("Total Pages: ").append(getTotalPages()).append("\n");
+		sb.append("Total From Backlog: ").append(getTotalBacklogBooksRead()).append("\n");
 		sb.append("Longest Book: ").append(printBookLength(longestBook, false)).append("\n");
 		sb.append("Shortest Book: ").append(printBookLength(shortestBook, false)).append("\n");
 		sb.append("Average Pages: ");
@@ -568,6 +592,7 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Number of Audiobooks: ").append(getTotalAudioBooks()).append("\n");
 		sb.append("Total Audio Hours: ").append(getTotalHours()).append("\n");
+		sb.append("Total From Backlog: ").append(getTotalBacklogAudioBooks()).append("\n");
 		sb.append("Longest Book: ").append(printBookLength(longestAudioBook, true)).append("\n");
 		sb.append("Shortest Book: ").append(printBookLength(shortestAudioBook, true)).append("\n");
 		sb.append("Average Hours: ");
@@ -580,6 +605,10 @@ public class YearlyReport extends AbstractReport{
 		sb.append("*******************\n");
 		sb.append("Reread Books:").append("\n");
 		sb.append(formatBookList(rereadBooks, formatter));
+		
+		sb.append("*******************\n");
+		sb.append("Backlog Books:").append("\n");
+		sb.append(formatBookList(backlogBooks, formatter));
 		
 		return sb.toString();
 	}

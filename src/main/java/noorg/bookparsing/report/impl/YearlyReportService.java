@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import noorg.bookparsing.domain.Book;
+import noorg.bookparsing.domain.report.BacklogYearToYearReport;
 import noorg.bookparsing.domain.report.BookFormatYearToYearReport;
 import noorg.bookparsing.domain.report.BookGenreYearToYearReport;
 import noorg.bookparsing.domain.report.BookRatingsYearToYearReport;
@@ -98,7 +99,8 @@ public class YearlyReportService extends AbstractReportService {
 		sb.append(new DecadeYearToYearReport(reports).getReport()).append("\n\n");
 		sb.append(new GenderYearToYearReport(reports).getReport()).append("\n\n");
 		sb.append(new BookFormatYearToYearReport(reports).getReport()).append("\n\n");
-		sb.append(new ReadingQuantityYearToYearReport(reports).getReport());
+		sb.append(new ReadingQuantityYearToYearReport(reports).getReport()).append("\n\n");
+		sb.append(new BacklogYearToYearReport(reports).getReport());
 		
 		return sb.toString();
 	}

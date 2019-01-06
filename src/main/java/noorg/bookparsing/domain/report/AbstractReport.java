@@ -160,6 +160,25 @@ public abstract class AbstractReport implements Report{
 		}
 	}
 	
+
+	/**
+	 * Helper to get the count from a map accounting for a key that may not exist
+	 * 
+	 * @param map
+	 * @param key
+	 * @return
+	 */
+	protected <K> int getMapCount(final Map<K,Integer> map, final K key) {
+		int total = 0;
+		
+		final Integer abCount = map.get(key);
+		if(abCount != null){
+			total = abCount;
+		}
+		
+		return total;
+	}
+	
 	/**
 	 * Helper to convert a map into rows of output of the form:
 	 * 
