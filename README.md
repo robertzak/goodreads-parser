@@ -59,8 +59,12 @@ This is probably the weakest feature so far. It is entirely data specific. In pa
 
 I created [BookEnricher](src/main/java/noorg/bookparsing/enrich/BookEnricher.java) interface, with an [AbstractBookEnricher](src/main/java/noorg/bookparsing/enrich/AbstractBookEnricher.java) for any shared functionality. I've created the following implementations:
 
+
+- [BacklogBookEnricher](src/main/java/noorg/bookparsing/enrich/BacklogBookEnricher.java) - Tracks which books you previously owned but hadn't read yet.
+- [ContributorGenderEnricher](src/main/java/noorg/bookparsing/enrich/ContributorGenderEnricher.java) - Sets the author's [gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) based on the shelves a book is on.
+- [GenreEnricher](src/main/java/noorg/bookparsing/enrich/GenreEnricher.java) - Sets the [genre](src/main/java/noorg/bookparsing/domain/types/BookGenre.java) of a book based on the shelves a book is on.
 - [GraphicNovelEnricher](src/main/java/noorg/bookparsing/enrich/GraphicNovelEnricher.java) - Sets the [Format](src/main/java/noorg/bookparsing/domain/types/BookFormat.java) to Graphic Novel based on the shelves a book is on.
-- [ContributorGenderEnricher](src/main/java/noorg/bookparsing/enrich/ContributorGenderEnricher.java) - Sets the author's [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) based on the shelves a book is on.
+- [ReadHistoryEnricher](src/main/java/noorg/bookparsing/enrich/ReadHistoryEnricher.java) - Sets the years a book was read based on the shelves a book is on.
 
 ### Shelving Books for Enrichment
 
@@ -84,7 +88,9 @@ This is a list of shelves that can be added to data to take advantage of existin
   - thriller
 - graphic-novel - Adding a book to this shelf in combination with the [GraphicNovelEnricher](src/main/java/noorg/bookparsing/enrich/GraphicNovelEnricher.java) will set the [Format](src/main/java/noorg/bookparsing/domain/types/BookFormat.java) to Graphic Novel
 - manga - Adding a book to this shelf in combination with the [GraphicNovelEnricher](src/main/java/noorg/bookparsing/enrich/GraphicNovelEnricher.java) will set the [Format](src/main/java/noorg/bookparsing/domain/types/BookFormat.java) to Graphic Novel
-- read-YYYY (ex: read-2016) - if you use these type of shelves, re-read books can be set to have multiple years beyond what is determined from the read date field.
+- own-backlog - Adding a book to these shelves in combination with the [BacklogBookEnricher](src/main/java/noorg/bookparsing/enrich/BacklogBookEnricher.java) will track how many books you read for your horde.
+- read-YYYY (ex: read-2016) -  Adding a book to these shelves in combination with the [ReadHistoryEnricher](src/main/java/noorg/bookparsing/enrich/ReadHistoryEnricher.java), re-read books can be set to have multiple years beyond what is determined from the read date field.
+- read-before-goodreads - the [ReadHistoryEnricher](src/main/java/noorg/bookparsing/enrich/ReadHistoryEnricher.java) also supports tracking books you first read before tracking your data on goodreads. This is helpful when you don't know what year you first read a book.
  
 
 ## Reporting

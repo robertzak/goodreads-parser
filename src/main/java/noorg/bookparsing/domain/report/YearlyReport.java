@@ -14,7 +14,7 @@ import noorg.bookparsing.report.format.BookFormatter;
 
 
 /**
- * <p>Copyright 2014-2016 Robert J. Zak
+ * <p>Copyright 2014-2020 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,8 +86,6 @@ public class YearlyReport extends AbstractReport{
 		}
 	}
 	
-
-
 	/**
 	 * Add details to the year's statistics
 	 */
@@ -200,9 +198,19 @@ public class YearlyReport extends AbstractReport{
 			totalRating += rating;
 		}
 		
-		if(book.isFromBacklog()) {
+		if(book.isFromBacklog() && (book.getFirstRead().equals(year))) {
+			/* Add if it came from the backlog only if this 
+			 * is the report for the first time it was read
+			 */
 			backlogBooks.add(book);
 			incrementMapValue(backlogCountsByFormat, book.getFormat());
+		}
+
+		/* Check the first year read and compare it to the report year
+		 * to determine if this was a re-read
+		 */					
+		if((book.isReadBeforeGoodReads()) || (!book.getFirstRead().equals(year))) {
+			addRereadBook(book);
 		}
 	}
 	

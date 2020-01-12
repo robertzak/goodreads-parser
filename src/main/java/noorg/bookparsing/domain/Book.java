@@ -11,7 +11,7 @@ import noorg.bookparsing.domain.types.BookGenre;
 import noorg.bookparsing.domain.types.ReadState;
 
 /**
- * <p>Copyright 2014-2016 Robert J. Zak
+ * <p>Copyright 2014-2020 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,8 @@ public class Book {
 	private BookGenre genre;
 	private Set<Integer> yearsRead = new HashSet<>();
 	private boolean fromBacklog = false;
+	private Integer firstRead;
+	private boolean readBeforeGoodReads;
 
 	public String getId() {
 		return id;
@@ -358,6 +360,22 @@ public class Book {
 
 	public void setFromBacklog(boolean fromBacklog) {
 		this.fromBacklog = fromBacklog;
+	}
+
+	public Integer getFirstRead() {
+		return firstRead;
+	}
+
+	public void setFirstRead(Integer firstRead) {
+		this.firstRead = firstRead;
+	}
+
+	public boolean isReadBeforeGoodReads() {
+		return readBeforeGoodReads;
+	}
+
+	public void setReadBeforeGoodReads(boolean readBeforeGoodReads) {
+		this.readBeforeGoodReads = readBeforeGoodReads;
 	}
 
 	/**

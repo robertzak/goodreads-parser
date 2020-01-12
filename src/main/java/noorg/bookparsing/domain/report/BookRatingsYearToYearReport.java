@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>Copyright 2016 Robert J. Zak
+ * <p>Copyright 2016-2020 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class BookRatingsYearToYearReport extends AbstractBookCountsYearToYearRep
 	}
 
 	@Override
-	protected int getDividerLength() {	
-		return 85;
+	protected int getDividerLength() {
+		return 100;
 	}
 }

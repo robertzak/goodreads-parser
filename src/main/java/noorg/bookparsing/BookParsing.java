@@ -14,14 +14,16 @@ import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.enrich.AbstractBookEnricher;
 import noorg.bookparsing.enrich.BacklogBookEnricher;
 import noorg.bookparsing.enrich.ContributorGenderEnricher;
+import noorg.bookparsing.enrich.GenreEnricher;
 import noorg.bookparsing.enrich.GraphicNovelEnricher;
+import noorg.bookparsing.enrich.ReadHistoryEnricher;
 import noorg.bookparsing.report.format.impl.DefaultBookFormater;
 import noorg.bookparsing.report.impl.YearlyReportService;
 import noorg.bookparsing.service.ParsingService;
 import noorg.bookparsing.service.impl.GoodReadsParsingService;
 
 /**
- * <p>Copyright 2014-2016 Robert J. Zak
+ * <p>Copyright 2014-2020 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +82,9 @@ public class BookParsing {
 		AbstractBookEnricher [] enrichers = {
 				new GraphicNovelEnricher(),
 				new ContributorGenderEnricher(),
-				new BacklogBookEnricher()
+				new BacklogBookEnricher(),
+				new ReadHistoryEnricher(),
+				new GenreEnricher()
 		};
 		
 		for(AbstractBookEnricher e: enrichers) {
@@ -88,7 +92,7 @@ public class BookParsing {
 		}
 		
 		// run reports
-		final Integer [] years = {2012, 2013, 2014, 2015, 2016, 2017, 2018};		
+		final Integer [] years = {2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019};
 		logger.info(new YearlyReportService(years).generateReport(books, 
 				new DefaultBookFormater()));
 	}

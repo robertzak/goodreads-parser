@@ -1,6 +1,6 @@
 package noorg.bookparsing.report.impl;
 
-import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +20,7 @@ import noorg.bookparsing.report.format.BookFormatter;
 
 
 /**
- * <p>Copyright 2014-2016 Robert J. Zak
+ * <p>Copyright 2014-2020 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,35 +57,7 @@ public class YearlyReportService extends AbstractReportService {
 		for(Integer reportYear: reportYears){
 		
 			YearlyReport report = new YearlyReport(reportYear);
-			for(Book book: books){
-				
-				boolean bookAdded = false;
-				if(book.getYearsRead().contains(reportYear)){
-					report.addBook(book);
-					bookAdded = true;
-				}
-				
-				// Attempt to determine re-reads.
-				if(bookAdded){
-					
-					/* Check if this book has a read date different from report year.
-					 * This will rely on the user shelving data a certain way.
-					 */
-					LocalDate dateRead = book.getDateRead();
-					if(dateRead != null){
-						final int yearRead = dateRead.getYear();
-						if(yearRead != reportYear){
-							report.addRereadBook(book);
-						}
-					}
-					
-					// Use their readCount (this may be more accurate)
-					final Integer readCount = book.getReadCount();
-					if(readCount != null && readCount> 1){
-						report.addRereadBook(book);
-					}
-				}
-			}
+			books.forEach(book-> report.addBook(book));
 
 			reports.add(report);
 			sb.append("*****************************************\n");

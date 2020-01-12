@@ -5,9 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +15,6 @@ import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.Contributor;
 import noorg.bookparsing.domain.types.BookCondition;
 import noorg.bookparsing.domain.types.BookFormat;
-import noorg.bookparsing.domain.types.BookGenre;
 import noorg.bookparsing.domain.types.ContributorRole;
 import noorg.bookparsing.service.ParsingService;
 
@@ -46,19 +43,6 @@ import noorg.bookparsing.service.ParsingService;
 public class GoodReadsParsingService implements ParsingService<String, Book> {
 	private static final Logger logger = LoggerFactory.getLogger(
 			GoodReadsParsingService.class);
-	
-	// Some possible shelves that might be used to guess the genre
-	private static final String SHELF_NON_FICTION = "non-fiction";
-	private static final String SHELF_SCI_FI = "sci-fi";
-	private static final String SHELF_SCIENCE_FICTION = "science-fiction";
-	
-	/**
-	 * This prefix will be used to determine additional years a book
-	 * was read if shelved that way.
-	 * 
-	 * Ex: read-2012, read-2014 will add 2012 and 2014 to the list
-	 */
-	private static final String SHELF_YEAR_READ_PREFIX = "read-";
 	
 	// TODO move this?
 	protected static final DateTimeFormatter GOODREADS_DATE_FORMAT = 
@@ -151,7 +135,7 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 			book.setConditionDescription(tokens[29]);
 			book.setBcid(tokens[30]);
 			
-			// enrich the data
+			// Determine the format from the binding
 			final BookFormat format = BookFormat.parse(book.getBinding());
 			if(BookFormat.UNKNOWN.equals(format)){
 				logger.debug("{} has unknown format from binding: {}",
@@ -181,86 +165,12 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 				}
 			}
 			
-
-			book.setGenre(getGenre(book.getBookshelves()));
 			// TODO read state..
-			
-			// set the years read
-			book.setYearsRead(getYearsRead(book.getDateRead(), book.getBookshelves()));
-			
 		} catch (IOException e) {
 			logger.error("Problem parsing data", e);
 		}
 		
 		return book;
-	}
-	
-	/**
-	 * This is an attempt to use the user's bookshelves to get the genre of
-	 * the book. See {@link BookGenre} for more about the genres.
-	 * 
-	 * This is going to largely depend on how a user shelves their books. What
-	 * I'm writing will work for my books, but probably not for everyone.
-	 * 
-	 * I'm open to suggestions on how to do this better.
-	 * 
-	 * TODO move this to it's own Enricher class. It's custom to my shelving
-	 * and shouldn't be in the main parser.
-	 * 
-	 * @param bookshelves
-	 * @return
-	 */
-	private BookGenre getGenre(final List<String> bookshelves){
-		BookGenre genre = BookGenre.UNKNOWN;
-		
-		if(bookshelves != null){
-			
-			genres:
-			for(BookGenre g: BookGenre.values()){
-				// use lower case
-				final String genreStr = g.toString().toLowerCase();
-				// first see if any shelf is an exact match
-				if(bookshelves.contains(genreStr)){
-					// easy. we're done
-					genre = g;
-					break genres;
-				}else{
-					// see if any shelf contains one of our genres
-					for(String shelf: bookshelves){
-						if(shelf.contains(genreStr)){
-							// probably good enough
-							genre = g;
-							break genres;
-						}
-					}
-					
-					/* Still don't know? Try some special handling
-					 * 
-					 * TODO what others can we add, or how can this be done 
-					 * better?
-					 */
-					if(BookGenre.UNKNOWN.equals(genre)){
-						for(String shelf: bookshelves){
-							switch(shelf){
-							case SHELF_NON_FICTION:
-								genre = BookGenre.NONFICTION;
-								break genres;
-							case SHELF_SCI_FI:
-							case SHELF_SCIENCE_FICTION:
-								genre = BookGenre.SCIFI;
-								break genres;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		if(BookGenre.UNKNOWN.equals(genre)){
-			logger.debug("Unable to find genre from: {}", bookshelves);
-		}
-		
-		return genre;
 	}
 
 
@@ -510,43 +420,6 @@ public class GoodReadsParsingService implements ParsingService<String, Book> {
 		}
 		
 		return author;
-	}
-	
-	/**
-	 * Determine the years this book was read. 
-	 * By default it will use your book's read date.
-	 * 
-	 * <p>Additionally if you shelf your books by year it will add those years as well.
-	 * see: {@link #SHELF_YEAR_READ}
-	 * 
-	 * @param dateRead
-	 * @param shelfList
-	 * @return
-	 */
-	private Set<Integer> getYearsRead(LocalDate dateRead, List<String> shelfList){
-		Set<Integer> yearsRead = new HashSet<>();
-		
-		// add the year of read date if set
-		if(dateRead != null){		
-			yearsRead.add(dateRead.getYear());
-		}
-		
-		// parse shelves for additional years
-		if(shelfList != null){
-			for(String shelf: shelfList){
-				if(shelf.startsWith(SHELF_YEAR_READ_PREFIX)){
-					// possible year shelf
-					final String yearToken = shelf.substring(SHELF_YEAR_READ_PREFIX.length());
-					try{
-						yearsRead.add(Integer.parseInt(yearToken));
-					}catch(Exception e){
-						logger.debug("Failed to convert {} into a year", yearToken, e);
-					}
-				}
-			}
-		}
-		
-		return yearsRead;
 	}
 	
 	/**
