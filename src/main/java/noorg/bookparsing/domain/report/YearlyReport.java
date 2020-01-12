@@ -562,8 +562,10 @@ public class YearlyReport extends AbstractReport{
 		
 		sb.append("Year: ").append(year).append("\n");
 		sb.append("Total Books: ").append(getTotal()).append("\n");
-		sb.append("Total Backlog Books: ").append(getTotalBacklogRead()).append("\n");
-		sb.append("Rereads: ").append(getRereadCount()).append("\n\n");
+		sb.append("Total Backlog Books: ").append(getTotalBacklogRead());
+		sb.append(" (").append(getPercentAsString(getTotalBacklogRead())).append("%)").append("\n");
+		sb.append("Rereads: ").append(getRereadCount());
+		sb.append(" (").append(getPercentAsString(getRereadCount())).append("%)").append("\n\n");
 		
 		sb.append("********************\n* Format Breakdown *\n********************\n");
 		sb.append(getCounts(countsByFormat)).append("\n");
