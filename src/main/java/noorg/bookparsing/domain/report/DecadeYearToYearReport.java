@@ -41,6 +41,6 @@ public class DecadeYearToYearReport extends AbstractBookCountsYearToYearReport<I
 
 	@Override
 	protected int getDividerLength() {
-		return 190;
+		return 205;
 	}
 }

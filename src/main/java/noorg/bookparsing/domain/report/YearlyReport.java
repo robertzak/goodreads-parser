@@ -503,11 +503,8 @@ public class YearlyReport extends AbstractReport{
 		boolean shorter = false;
 		
 		
-		//logger.info("Comparing {} ({}) to {} ({})", book1, getBookLength(book1), book2, getBookLength(book2));
 		if(book1 != null) {
-			//logger.info("Book1 not null!");
 			if(book2 != null) {
-				//logger.info("Book2 not null!");
 				shorter = getBookLength(book1) < getBookLength(book2);
 			}else {
 				shorter = true;
