@@ -36,32 +36,38 @@ import noorg.bookparsing.domain.types.ContributorGender;
  */
 public class ContributorGenderEnricher extends AbstractBookEnricher {
 	private static final Logger logger = LoggerFactory.getLogger(ContributorGenderEnricher.class);
-	
-	private static final String AUTHOR_MALE = "author-male";
+
 	private static final String AUTHOR_FEMALE = "author-female";
+	private static final String AUTHOR_MALE = "author-male";
+	private static final String AUTHOR_NON_BINARY = "author-non_binary";
 	
 	@Override
 	protected void enrichBook(final Book book) {
 			
 		final List<String> shelves = book.getBookshelves();
 		
-		boolean authorMale = false;
+
 		boolean authorFemale = false;
+		boolean authorMale = false;
+		boolean authorNonBinary = false;
 		if(shelves != null){
-			authorMale = shelves.contains(AUTHOR_MALE);
 			authorFemale = shelves.contains(AUTHOR_FEMALE);
+			authorMale = shelves.contains(AUTHOR_MALE);
+			authorNonBinary = shelves.contains(AUTHOR_NON_BINARY);
 		}
 		
 		// Ensure only 1 gender was found
 		Contributor author = book.getAuthor();
-		if(authorMale && !authorFemale){ // only male
-			author.setGender(ContributorGender.MALE);
-		}else if(authorFemale && !authorMale){ // only female
+		if(authorFemale && !authorMale & !authorNonBinary){ // only female
 			author.setGender(ContributorGender.FEMALE);
-		}else if (!authorMale && !authorFemale){ // no gender shelf at all
+		} else if(authorMale && !authorFemale && !authorNonBinary){ // only male
+			author.setGender(ContributorGender.MALE);
+		} else if(authorNonBinary && !authorFemale && !authorMale){ // only non-binary
+			author.setGender(ContributorGender.MALE);
+		} else if (!authorMale && !authorFemale && !authorNonBinary){ // no gender shelf at all
 			if(book.getReadCount() > 0) {
-				logger.info("Not setting Author Gender for {}, authorMale={}, authorFemale={}", 
-					book, authorMale, authorFemale);
+				logger.info("Not setting Author Gender for {}, authorFemale={}, authorMale={}, authorNonBinary={}", 
+					book, authorFemale, authorMale, authorNonBinary);
 			}
 		}
 	}

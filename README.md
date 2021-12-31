@@ -70,8 +70,9 @@ I created [BookEnricher](src/main/java/noorg/bookparsing/enrich/BookEnricher.jav
 
 This is a list of shelves that can be added to data to take advantage of existing data enrichment code. It is likely not complete.
 
-- author-male - Adding a book to this shelf in combination with the [ContributorGenderEnricher](src/main/java/noorg/bookparsing/enrich/ContributorGenderEnricher.java) will set the author's [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) to Male
 - author-female - Adding a book to this shelf combination with the [ContributorGenderEnricher](src/main/java/noorg/bookparsing/enrich/ContributorGenderEnricher.java) will set the author's [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) to Female
+- author-male - Adding a book to this shelf in combination with the [ContributorGenderEnricher](src/main/java/noorg/bookparsing/enrich/ContributorGenderEnricher.java) will set the author's [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) to Male
+- author-non_binary - Adding a book to this shelf in combination with the [ContributorGenderEnricher](src/main/java/noorg/bookparsing/enrich/ContributorGenderEnricher.java) will set the author's [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) to Non-Binary
 - genre shelves - Set the book genre if one of the following is present.
   - fantasy
   - historical
