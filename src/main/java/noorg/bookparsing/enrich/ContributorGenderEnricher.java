@@ -11,7 +11,7 @@ import noorg.bookparsing.domain.types.ContributorGender;
 
 /**
  * 
- * <p>Copyright 2016 Robert J. Zak
+ * <p>Copyright 2016-2021 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

@@ -95,7 +95,7 @@ public class BookParsing {
 		
 		// run reports
 		BookFormatter formatter = new DefaultBookFormater();
-		final Integer [] years = {2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020};
+		final Integer [] years = {2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021};
 		logger.info(new YearlyReportService(years).generateReport(books, formatter));
 		logger.info(new AuthorCountsReportService(10).generateReport(books, formatter));
 	}
