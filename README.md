@@ -122,6 +122,7 @@ So far there is one service interface: [ReportService](src/main/java/noorg/bookp
 
 I've created the following concrete implementations so far:
 
+- [AuthorCountsReportService](src/main/java/noorg/bookparsing/report/impl/AuthorCountsReportService.java) - Reports your top N read Authors
 - [GenderReportService](src/main/java/noorg/bookparsing/report/impl/GenderReportService.java) - Creates a [GenderReport](src/main/java/noorg/bookparsing/domain/report/GenderReport.java) for each [Gender](src/main/java/noorg/bookparsing/domain/types/ContributorGender.java) you've read and outputs a genre-by-genre breakdown to allow you to evaluate your reading habbits from an author gender perspective.
 - [GenreReportService](src/main/java/noorg/bookparsing/report/impl/GenreReportService.java) - Creates a [GenreReport](src/main/java/noorg/bookparsing/domain/report/GenreReport.java) for each [Genre](src/main/java/noorg/bookparsing/domain/types/BookGenre.java) you've read and outputs a genre-by-genre breakdown to allow you to evaluate your reading habbits from a genre perspective.
 - [YearlyReportService](src/main/java/noorg/bookparsing/report/impl/YearlyReportService.java) - Create a [YearlyReport](src/main/java/noorg/bookparsing/domain/report/YearlyReport.java) for the year(s) specified and output the results. Additionally all the generated [YearlyReports](src/main/java/noorg/bookparsing/domain/report/YearlyReport.java) will in turn generate several Year-to-Year reports.
