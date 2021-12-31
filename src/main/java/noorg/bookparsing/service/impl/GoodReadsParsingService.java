@@ -10,7 +10,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVParser;
+import com.opencsv.CSVParser;
+
 import noorg.bookparsing.domain.Book;
 import noorg.bookparsing.domain.Contributor;
 import noorg.bookparsing.domain.types.BookCondition;
@@ -20,7 +21,7 @@ import noorg.bookparsing.service.ParsingService;
 
 
 /**
- * <p>Copyright 2014-2016 Robert J. Zak
+ * <p>Copyright 2014-2021 Robert J. Zak
  * 
  * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
